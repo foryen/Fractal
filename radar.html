@@ -10,36 +10,68 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </head>
 <body class="bg-zinc-950 text-zinc-200 min-h-screen">
+<!-- Firebase + Auth Guard -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="auth-guard.js"></script>
 
-<header class="site-header">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="index.html" class="flex items-center gap-3" style="text-decoration:none">
-            <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
-            <span class="text-2xl font-semibold title-font tracking-tighter text-zinc-100">FRACTAL</span>
-        </a>
-        <nav class="hidden md:flex items-center gap-8">
-                <a href="index.html" class="nav-link">Newsletter</a>
-                <a href="radar.html" class="nav-link active">Radar</a>
-                <a href="archives.html" class="nav-link">Archives</a>
-                <a href="apropos.html" class="nav-link">À propos</a>
-        </nav>
-        <button id="burger" class="md:hidden text-zinc-400 hover:text-white" aria-label="Menu">
-            <i class="fa-solid fa-bars text-xl"></i>
-        </button>
-        <button class="btn-primary hidden md:block">S'abonner</button>
+<script>
+  // Cache le contenu tant que l'auth n'est pas vérifiée
+  document.body.style.visibility = 'hidden';
+  
+  FractalAuth.checkAuth(true).then(user => {
+    document.body.style.visibility = 'visible';
+    FractalAuth.renderAuthUI('auth-section');
+  });
+</script>
+<header class="site-header" id="siteHeader">
+  <nav class="header-nav">
+    <!-- Logo + Nom -->
+    <a href="index.html" class="logo-container" title="Retour à l'accueil">
+      <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
+      <span class="logo-text title-font">Fractal</span>
+    </a>
+    
+    <!-- Navigation desktop -->
+    <div class="nav-links">
+      <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
+      <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
+      <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
+      <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
     </div>
-    <div id="mobile-nav" class="hidden md:hidden border-t border-zinc-800 px-6 py-4 flex flex-col gap-4">
-        <a href="index.html" class="nav-link text-base">Newsletter</a>
-        <a href="radar.html" class="nav-link text-base">Radar</a>
-        <a href="archives.html" class="nav-link text-base">Archives</a>
-        <a href="apropos.html" class="nav-link text-base">À propos</a>
-        <button class="btn-primary w-full mt-2">S'abonner</button>
+    
+    <!-- Zone Auth + Menu mobile -->
+    <div class="header-actions">
+      <div id="auth-section">
+        <div class="skeleton" style="width:6rem;height:2rem;border-radius:1rem;"></div>
+      </div>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
+  </nav>
+  
+  <!-- Menu mobile (dropdown) -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" class="mobile-nav-link" data-page="index.html">Newsletter</a>
+    <a href="radar.html" class="mobile-nav-link" data-page="radar.html">Radar</a>
+    <a href="archives.html" class="mobile-nav-link" data-page="archives.html">Archives</a>
+    <a href="apropos.html" class="mobile-nav-link" data-page="apropos.html">À propos</a>
+    <div id="auth-section-mobile"></div>
+  </div>
 </header>
 <script>
-document.getElementById('burger').addEventListener('click',()=>{
-    document.getElementById('mobile-nav').classList.toggle('hidden');
-});
+const burger = document.getElementById('burger');
+if (burger) {
+  burger.addEventListener('click', () => {
+    const mobileNav = document.getElementById('mobile-nav');
+    if (mobileNav) {
+      mobileNav.classList.toggle('hidden');
+    }
+  });
+}
 </script>
 
 
@@ -592,6 +624,139 @@ window.addEventListener('DOMContentLoaded', init);
     },{threshold:0.08});
     document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 })();
+</script>
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<script>
+// ═══════════════════════════════════════════
+// FIREBASE CONFIG
+// ═══════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyBSlXOeyDxVKUFBBkPTMbsS_oY6kADkbMg",
+  authDomain: "fractal-86f1f.firebaseapp.com",
+  projectId: "fractal-86f1f",
+  storageBucket: "fractal-86f1f.firebasestorage.app",
+  messagingSenderId: "954198010037",
+  appId: "1:954198010037:web:3548437da32d3a34d7b6fc"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+firebase.auth().languageCode = 'fr';
+
+// ═══════════════════════════════════════════
+// GESTION DYNAMIQUE DU HEADER AUTH
+// ═══════════════════════════════════════════
+firebase.auth().onAuthStateChanged((user) => {
+  const authSection = document.getElementById('auth-section');
+  const authSectionMobile = document.getElementById('auth-section-mobile');
+  if (!authSection) return;
+
+  if (user) {
+    // ✅ UTILISATEUR CONNECTÉ
+    const displayName = user.displayName || user.email.split('@')[0];
+    const initial = displayName[0].toUpperCase();
+    
+    const authHTML = `
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <a href="compte.html" class="auth-user-badge">
+          <div class="auth-avatar">${initial}</div>
+          <span class="auth-username">${displayName}</span>
+        </a>
+        <button id="logoutBtn" class="logout-btn" title="Se déconnecter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
+          </svg>
+        </button>
+      </div>
+    `;
+    
+    authSection.innerHTML = authHTML;
+    if (authSectionMobile) {
+      authSectionMobile.innerHTML = `
+        <div style="display:flex;gap:0.5rem;padding-top:1rem;">
+          <a href="compte.html" class="btn-primary" style="flex:1;text-align:center;text-decoration:none;">
+            Mon compte
+          </a>
+          <button id="logoutBtnMobile" class="logout-btn" style="flex-shrink:0;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
+            </svg>
+          </button>
+        </div>
+      `;
+    }
+    
+    // Événements logout
+    const logoutHandler = async () => {
+      await firebase.auth().signOut();
+      window.location.href = 'login.html';
+    };
+    document.getElementById('logoutBtn')?.addEventListener('click', logoutHandler);
+    document.getElementById('logoutBtnMobile')?.addEventListener('click', logoutHandler);
+    
+  } else {
+    // ❌ UTILISATEUR NON CONNECTÉ
+    authSection.innerHTML = `
+      <a href="login.html" class="btn-primary" style="padding:0.5rem 1.25rem;font-size:0.875rem;">
+        Se connecter
+      </a>
+    `;
+    if (authSectionMobile) {
+      authSectionMobile.innerHTML = `
+        <a href="login.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:1rem;padding:0.75rem;">
+          Se connecter
+        </a>
+      `;
+    }
+  }
+});
+
+// ═══════════════════════════════════════════
+// HEADER UX ENHANCEMENTS
+// ═══════════════════════════════════════════
+
+// 1. Effet de scroll
+const header = document.getElementById('siteHeader');
+if (header) {
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 50) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  });
+}
+
+// 2. Menu mobile toggle
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+
+if (mobileMenuBtn && mobileMenu) {
+  mobileMenuBtn.addEventListener('click', () => {
+    mobileMenuBtn.classList.toggle('active');
+    mobileMenu.classList.toggle('active');
+  });
+  
+  mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenuBtn.classList.remove('active');
+      mobileMenu.classList.remove('active');
+    });
+  });
+}
+
+// 3. Marquer la page active
+const currentPage = (window.location.pathname.split('/').pop() || 'index.html').replace(/\.html$/i, '');
+document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+  const page = (link.getAttribute('data-page') || link.getAttribute('href') || '').replace(/\.html$/i, '');
+  if (page === currentPage || (currentPage === 'index' && page === 'index')) {
+    link.classList.add('active');
+  }
+});
 </script>
 </body>
 </html>

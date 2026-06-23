@@ -1,29 +1,77 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fractal • Archives</title>
-    <link rel="stylesheet" href="fractal.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal • Mon compte</title>
+  <link rel="stylesheet" href="fractal.css">
+  <style>
+    .account-container {
+      max-width: 48rem;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+    .account-card {
+      background: rgba(24,24,27,0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(63,63,70,0.8);
+      border-radius: 1.5rem;
+      padding: 3rem 2rem;
+    }
+    .avatar {
+      width: 5rem;
+      height: 5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--emerald-500), var(--emerald-600));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 auto 1rem;
+      box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .stat-card {
+      background: var(--zinc-800);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--emerald-400);
+    }
+    .stat-label {
+      color: var(--zinc-400);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .section-divider {
+      border-top: 1px solid var(--zinc-800);
+      padding-top: 2rem;
+      margin-top: 2rem;
+    }
+    .premium-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1));
+      border: 1px solid rgba(16,185,129,0.4);
+      padding: 1rem 1.5rem;
+      border-radius: 1rem;
+      width: 100%;
+    }
+  </style>
 </head>
-<body class="bg-zinc-950 text-zinc-200 min-h-screen">
-<!-- Firebase + Auth Guard -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="auth-guard.js"></script>
+<body>
 
-<script>
-  // Cache le contenu tant que l'auth n'est pas vérifiée
-  document.body.style.visibility = 'hidden';
-  
-  FractalAuth.checkAuth(true).then(user => {
-    document.body.style.visibility = 'visible';
-    FractalAuth.renderAuthUI('auth-section');
-  });
-</script>
 <header class="site-header" id="siteHeader">
   <nav class="header-nav">
     <!-- Logo + Nom -->
@@ -34,10 +82,10 @@
     
     <!-- Navigation desktop -->
     <div class="nav-links">
-      <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
-      <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
-      <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
-      <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
+      <a href="index.html" class="nav-link" data-page="index">Newsletter</a>
+      <a href="radar.html" class="nav-link" data-page="radar">Radar</a>
+      <a href="archives.html" class="nav-link" data-page="archives">Archives</a>
+      <a href="apropos.html" class="nav-link" data-page="apropos">À propos</a>
     </div>
     
     <!-- Zone Auth + Menu mobile -->
@@ -55,64 +103,93 @@
   
   <!-- Menu mobile (dropdown) -->
   <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html" class="mobile-nav-link" data-page="index.html">Newsletter</a>
-    <a href="radar.html" class="mobile-nav-link" data-page="radar.html">Radar</a>
-    <a href="archives.html" class="mobile-nav-link" data-page="archives.html">Archives</a>
-    <a href="apropos.html" class="mobile-nav-link" data-page="apropos.html">À propos</a>
+    <a href="index.html" class="mobile-nav-link" data-page="index">Newsletter</a>
+    <a href="radar.html" class="mobile-nav-link" data-page="radar">Radar</a>
+    <a href="archives.html" class="mobile-nav-link" data-page="archives">Archives</a>
+    <a href="apropos.html" class="mobile-nav-link" data-page="apropos">À propos</a>
     <div id="auth-section-mobile"></div>
   </div>
 </header>
-<script>
-const burger = document.getElementById('burger');
-if (burger) {
-  burger.addEventListener('click', () => {
-    const mobileNav = document.getElementById('mobile-nav');
-    if (mobileNav) {
-      mobileNav.classList.toggle('hidden');
-    }
-  });
-}
-</script>
 
-<!-- ══ HERO ══ -->
-<section class="max-w-7xl mx-auto px-6 pt-20 pb-16 text-center reveal">
-    <div class="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 rounded-3xl px-5 py-2 mb-6">
-        <span class="text-emerald-400 text-sm font-medium">✦ Historique</span>
+  <main class="account-container">
+    <div class="account-card">
+      <div style="text-align:center;">
+        <div class="avatar title-font" id="userAvatar">F</div>
+        <h1 class="title-font" style="font-size:1.75rem;margin-bottom:0.5rem;" id="userName">Chargement...</h1>
+        <p style="color:var(--zinc-400);font-size:0.875rem;" id="userEmail">—</p>
+      </div>
+
+      <div class="section-divider">
+        <h2 class="title-font" style="font-size:1.25rem;margin-bottom:1rem;">Votre abonnement</h2>
+        <div class="premium-badge">
+          <span style="font-size:1.5rem;">✨</span>
+          <div>
+            <div class="title-font" style="font-weight:600;">Accès Premium</div>
+            <div style="color:var(--zinc-400);font-size:0.8rem;">Accès illimité à toutes les fonctionnalités</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <h2 class="title-font" style="font-size:1.25rem;margin-bottom:1rem;">Vos avantages</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value title-font">15</div>
+            <div class="stat-label">Articles / jour</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value title-font">∞</div>
+            <div class="stat-label">Archives</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value title-font">24/7</div>
+            <div class="stat-label">Radar live</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <h2 class="title-font" style="font-size:1.25rem;margin-bottom:1rem;">Actions rapides</h2>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <a href="index.html" class="btn-primary" style="text-align:center;text-decoration:none;">
+            📰 Voir la newsletter du jour
+          </a>
+          <a href="archives.html" class="btn-primary" style="text-align:center;text-decoration:none;background:var(--zinc-800);">
+            📚 Accéder aux archives
+          </a>
+          <a href="radar.html" class="btn-primary" style="text-align:center;text-decoration:none;background:var(--zinc-800);">
+            📡 Ouvrir le radar
+          </a>
+        </div>
+      </div>
+
+      <div class="section-divider" style="text-align:center;">
+        <button id="logoutBtn" class="btn-primary" style="background:transparent;border:1px solid var(--zinc-700);color:var(--zinc-400);">
+          Se déconnecter
+        </button>
+      </div>
     </div>
-    <h1 class="text-6xl md:text-7xl font-bold title-font tracking-tighter leading-none mb-5">
-        Archives<br><span class="text-emerald-400">Fractal</span>
-    </h1>
-    <p class="text-xl text-zinc-400 max-w-xl mx-auto">Toutes les éditions passées, classées par date.</p>
-</section>
+  </main>
 
-<!-- ══ TODO : Liste des éditions archivées ══ -->
-<!-- Chaque archive = un fichier JSON dans /archives/ -->
-<!-- À implémenter : fetch de la liste + rendu des cartes par date -->
-<section class="max-w-7xl mx-auto px-6 pb-24">
-    <div class="f-card p-16 text-center">
-        <div class="text-5xl mb-6">🗂️</div>
-        <p class="text-zinc-400 text-lg font-semibold mb-2">Bientôt disponible</p>
-        <p class="text-zinc-600 text-sm">Les archives s'alimenteront automatiquement à chaque nouvelle édition du pipeline.</p>
-    </div>
-</section>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="auth-guard.js"></script>
 
-<footer class="site-footer">
-    <p>
-        Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.<br>
-        Ils ne constituent pas un conseil en investissement personnalisé. Fractal ne détient pas le statut de CIF (AMF).<br>
-        Tout investissement comporte des risques de perte en capital.
-    </p>
-    <p class="mt-4">© 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a></p>
-</footer>
-<script>
-(function(){
-    const obs = new IntersectionObserver(entries=>{
-        entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
-    },{threshold:0.08});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-})();
-</script>
-<!-- Firebase SDK (compat) -->
+  <script>
+    (async function() {
+      // Page protégée : redirige si non connecté
+      const user = await FractalAuth.checkAuth(true);
+      FractalAuth.renderAuthUI('auth-section');
+
+      // Affiche les infos utilisateur
+      const displayName = user.displayName || user.email.split('@')[0];
+      document.getElementById('userName').textContent = displayName;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userAvatar').textContent = displayName[0].toUpperCase();
+    })();
+  </script>
+  <!-- Firebase SDK (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
@@ -208,15 +285,13 @@ firebase.auth().onAuthStateChanged((user) => {
 
 // 1. Effet de scroll
 const header = document.getElementById('siteHeader');
-if (header) {
-  window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
-    }
-  });
-}
+window.addEventListener('scroll', () => {
+  if (window.pageYOffset > 50) {
+    header.classList.add('scrolled');
+  } else {
+    header.classList.remove('scrolled');
+  }
+});
 
 // 2. Menu mobile toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
