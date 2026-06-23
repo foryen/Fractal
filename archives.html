@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal • Archives</title>
+    <link rel="stylesheet" href="fractal.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+</head>
+<body class="bg-zinc-950 text-zinc-200 min-h-screen">
+
+<header class="site-header">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-3" style="text-decoration:none">
+            <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
+            <span class="text-2xl font-semibold title-font tracking-tighter text-zinc-100">FRACTAL</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="nav-link">Newsletter</a>
+                <a href="radar.html" class="nav-link">Radar</a>
+                <a href="archives.html" class="nav-link active">Archives</a>
+                <a href="apropos.html" class="nav-link">À propos</a>
+        </nav>
+        <button id="burger" class="md:hidden text-zinc-400 hover:text-white" aria-label="Menu">
+            <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+        <button class="btn-primary hidden md:block">S'abonner</button>
+    </div>
+    <div id="mobile-nav" class="hidden md:hidden border-t border-zinc-800 px-6 py-4 flex flex-col gap-4">
+        <a href="index.html" class="nav-link text-base">Newsletter</a>
+        <a href="radar.html" class="nav-link text-base">Radar</a>
+        <a href="archives.html" class="nav-link text-base">Archives</a>
+        <a href="apropos.html" class="nav-link text-base">À propos</a>
+        <button class="btn-primary w-full mt-2">S'abonner</button>
+    </div>
+</header>
+<script>
+document.getElementById('burger').addEventListener('click',()=>{
+    document.getElementById('mobile-nav').classList.toggle('hidden');
+});
+</script>
+
+<!-- ══ HERO ══ -->
+<section class="max-w-7xl mx-auto px-6 pt-20 pb-16 text-center reveal">
+    <div class="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 rounded-3xl px-5 py-2 mb-6">
+        <span class="text-emerald-400 text-sm font-medium">✦ Historique</span>
+    </div>
+    <h1 class="text-6xl md:text-7xl font-bold title-font tracking-tighter leading-none mb-5">
+        Archives<br><span class="text-emerald-400">Fractal</span>
+    </h1>
+    <p class="text-xl text-zinc-400 max-w-xl mx-auto">Toutes les éditions passées, classées par date.</p>
+</section>
+
+<!-- ══ TODO : Liste des éditions archivées ══ -->
+<!-- Chaque archive = un fichier JSON dans /archives/ -->
+<!-- À implémenter : fetch de la liste + rendu des cartes par date -->
+<section class="max-w-7xl mx-auto px-6 pb-24">
+    <div class="f-card p-16 text-center">
+        <div class="text-5xl mb-6">🗂️</div>
+        <p class="text-zinc-400 text-lg font-semibold mb-2">Bientôt disponible</p>
+        <p class="text-zinc-600 text-sm">Les archives s'alimenteront automatiquement à chaque nouvelle édition du pipeline.</p>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <p>
+        Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.<br>
+        Ils ne constituent pas un conseil en investissement personnalisé. Fractal ne détient pas le statut de CIF (AMF).<br>
+        Tout investissement comporte des risques de perte en capital.
+    </p>
+    <p class="mt-4">© 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a></p>
+</footer>
+<script>
+(function(){
+    const obs = new IntersectionObserver(entries=>{
+        entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+    },{threshold:0.08});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+})();
+</script>
+</body>
+</html>

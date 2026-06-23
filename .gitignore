@@ -1,0 +1,29 @@
+# Base de données locale (trop lourde pour GitHub)
+fractal_news.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Variables d'environnement locales (si tu en crées)
+.env
+.env.local
+
+# Logs
+*.log
