@@ -465,7 +465,7 @@ RETOURNE STRICTEMENT un objet JSON valide, sans texte autour :
     "explication_impact": "<2 phrases : effet concret sur l'offre, la demande ou la valorisation>"
   },
   "analyse_critique_et_biais": {
-    "piege_psychologique": "<Biais cognitif précis que cette news active (FOMO, panique, ancrage...)>",
+    "piege_psychologique": "<Choisis UN SEUL biais cognitif précis dans cette liste exclusive que tu developperas en 2 lignes. INTERDICTION FORMELLE d'utiliser le mot FOMO ou 'Peur de manquer'. Liste : Aversion à la perte, Biais d'ancrage, Biais de confirmation, Effet de halo, Biais de disponibilité, Excès de confiance, Biais de représentativité, Biais du survivant, Effet de levier émotionnel, Biais de normalité, Illusion de contrôle, Aversion à l'ambiguïté, Biais de récence.>",
     "ce_que_le_marche_oublie": "<La nuance ou le risque caché que la majorité sous-estime>"
   },
   "radar_fractal": {
