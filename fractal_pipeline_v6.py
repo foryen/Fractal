@@ -19,7 +19,10 @@ from groq import Groq
 # CONFIGURATION
 # ==============================================================================
 
-GROQ_API_KEY    = "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"
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+if not GROQ_API_KEY:
+    raise ValueError("❌ GROQ_API_KEY non définie. Configure-la dans les variables d'environnement.")
+
 MODELE_GROQ     = "llama-3.3-70b-versatile"
 FICHIER_NEWSLETTER = "newsletter_data.json"
 
