@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --emerald-400:#34d399; --emerald-500:#10b981; --emerald-600:#059669;
+    --zinc-400:#a1a1aa; --zinc-700:#3f3f46; --zinc-800:#27272a; --zinc-900:#18181b; --zinc-950:#09090b;
+    --red-400:#f87171; --amber-400:#fbbf24;
+    --text:#e4e4e7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#000}
+  /* Each slide is an Instagram 4:5 portrait frame: 1080 x 1350 */
+  .slide{
+    width:1080px;height:1350px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(120% 80% at 80% -10%, rgba(16,185,129,0.10), transparent 55%),
+      linear-gradient(180deg, var(--zinc-950) 0%, #0c0c0f 100%);
+    color:var(--text);font-family:'Inter',system-ui,sans-serif;
+    padding:96px 92px;display:flex;flex-direction:column;
+  }
+  .grain{position:absolute;inset:0;opacity:.035;
+    background-image:radial-gradient(#fff 1px,transparent 1px);background-size:4px 4px;pointer-events:none}
+  .title-font{font-family:'Space Grotesk',sans-serif}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .brand{display:flex;align-items:center;gap:18px}
+  .brand-mark{width:54px;height:54px;border-radius:14px;
+    background:linear-gradient(135deg,var(--emerald-500),var(--emerald-600));
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:30px;color:#fff;
+    box-shadow:0 16px 32px -4px rgb(16 185 129 / .35)}
+  .brand-name{font-weight:700;font-size:30px;letter-spacing:.5px}
+  .brand-name span{color:var(--emerald-400)}
+  .kicker{font-size:22px;color:var(--zinc-400);font-weight:600;text-transform:uppercase;letter-spacing:3px}
+  .step{font-size:22px;color:var(--zinc-400);font-weight:600}
+  .accent-line{height:5px;width:96px;border-radius:99px;background:var(--emerald-500);margin:0 0 40px}
+  .body{flex:1;display:flex;flex-direction:column;justify-content:center}
+  h1{font-size:88px;line-height:1.04;font-weight:800;letter-spacing:-1.5px}
+  .flash{font-size:42px;line-height:1.32;color:#d4d4d8;margin-top:46px;font-weight:500}
+  .label{font-size:26px;font-weight:700;color:var(--emerald-400);text-transform:uppercase;letter-spacing:3px;margin-bottom:34px}
+  .lead{font-size:46px;line-height:1.42;font-weight:500;color:#e9e9ec}
+  .lead.small{font-size:40px;line-height:1.45}
+  .footer{display:flex;align-items:center;justify-content:space-between;font-size:24px;color:var(--zinc-400);margin-top:30px}
+  .source{max-width:680px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .badge{display:inline-flex;align-items:center;gap:14px;font-size:30px;font-weight:700;
+    padding:18px 34px;border-radius:99px;border:1px solid;align-self:flex-start}
+  .badge .dot{width:16px;height:16px;border-radius:99px;background:currentColor}
+  .badge-hausse{background:rgba(16,185,129,.12);color:var(--emerald-400);border-color:rgba(16,185,129,.35)}
+  .badge-baisse{background:rgba(239,68,68,.12);color:var(--red-400);border-color:rgba(239,68,68,.35)}
+  .badge-neutre{background:rgba(161,161,170,.12);color:var(--zinc-400);border-color:rgba(161,161,170,.35)}
+  .badge-incertitude{background:rgba(251,191,36,.12);color:var(--amber-400);border-color:rgba(251,191,36,.35)}
+  .chips{display:flex;flex-wrap:wrap;gap:20px;margin:42px 0}
+  .chip{font-size:34px;font-weight:600;padding:18px 36px;border-radius:18px;
+    background:rgba(16,185,129,.10);border:1px solid rgba(16,185,129,.30);color:var(--emerald-400)}
+  /* radar bars */
+  .radar{display:flex;flex-direction:column;gap:52px;margin-top:24px}
+  .metric .mh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px}
+  .metric .mn{font-size:40px;font-weight:600}
+  .metric .mv{font-size:40px;font-weight:800}
+  .segs{display:flex;gap:14px}
+  .seg{flex:1;height:34px;border-radius:10px;background:var(--zinc-800)}
+  .seg.on-high{background:var(--emerald-500)}
+  .seg.on-mid{background:var(--amber-400)}
+  .seg.on-low{background:var(--red-400)}
+  .horizon{margin-top:64px;font-size:34px;color:var(--zinc-400)}
+  .horizon b{color:#fff}
+  .block{margin-bottom:64px}
+  .quote{font-size:42px;line-height:1.4;font-weight:500;color:#e9e9ec}
+  .cta{font-size:44px;font-weight:800;color:#fff;line-height:1.2}
+  .cta .at{color:var(--emerald-400)}
+  .disclaimer{font-size:24px;line-height:1.5;color:#71717a;border-top:1px solid var(--zinc-800);padding-top:34px;margin-top:34px}
+</style>
+</head>
+<body>
+
+<!-- 1 — HOOK -->
+<div class="slide" data-slide="hook">
+  <div class="grain"></div>
+  <div class="topbar">
+    <div class="brand"><div class="brand-mark">F</div><div class="brand-name">Fractal<span>.</span></div></div>
+    <div class="kicker">Décryptage</div>
+  </div>
+  <div class="accent-line"></div>
+  <div class="body">
+    <span class="badge badge-{{ trend_class }}"><span class="dot"></span>{{ a.impact_financier.tendance_marche }}</span>
+    <h1 class="title-font" style="margin-top:46px">{{ a.titre_newsletter }}</h1>
+    <p class="flash">{{ a.synthese_flash }}</p>
+  </div>
+  <div class="footer">
+    <span class="source">Source · {{ a._meta.source }}</span>
+    <span>Glisse →</span>
+  </div>
+</div>
+
+<!-- 2 — CONTEXTE -->
+<div class="slide" data-slide="contexte">
+  <div class="grain"></div>
+  <div class="topbar"><div class="kicker">Le contexte</div><div class="step">01</div></div>
+  <div class="accent-line"></div>
+  <div class="body">
+    <div class="label">Pourquoi on en arrive là</div>
+    <p class="lead">{{ a.contexte_macro_micro }}</p>
+  </div>
+  <div class="footer"><span>Fractal · Média financier</span><span>Glisse →</span></div>
+</div>
+
+<!-- 3 — MÉCANIQUE -->
+<div class="slide" data-slide="mecanique">
+  <div class="grain"></div>
+  <div class="topbar"><div class="kicker">Ce qui se passe</div><div class="step">02</div></div>
+  <div class="accent-line"></div>
+  <div class="body">
+    <div class="label">La mécanique</div>
+    <p class="lead small">{{ a.mecanique_de_l_evenement }}</p>
+  </div>
+  <div class="footer"><span>Fractal · Média financier</span><span>Glisse →</span></div>
+</div>
+
+<!-- 4 — IMPACT -->
+<div class="slide" data-slide="impact">
+  <div class="grain"></div>
+  <div class="topbar"><div class="kicker">L'impact marché</div><div class="step">03</div></div>
+  <div class="accent-line"></div>
+  <div class="body">
+    <span class="badge badge-{{ trend_class }}"><span class="dot"></span>{{ a.impact_financier.tendance_marche }}</span>
+    <div class="chips">
+      {% for actif in a.impact_financier.actifs_concernes %}<span class="chip">{{ actif }}</span>{% endfor %}
+    </div>
+    <p class="lead small">{{ a.impact_financier.explication_impact }}</p>
+  </div>
+  <div class="footer"><span>Fractal · Média financier</span><span>Glisse →</span></div>
+</div>
+
+<!-- 5 — RADAR -->
+<div class="slide" data-slide="radar">
+  <div class="grain"></div>
+  <div class="topbar"><div class="kicker">Radar Fractal</div><div class="step">04</div></div>
+  <div class="accent-line"></div>
+  <div class="body">
+    <div class="radar">
+      {% for m in radar %}
+      <div class="metric">
+        <div class="mh"><span class="mn">{{ m.name }}</span><span class="mv" style="color:{{ m.color }}">{{ m.value }}/5</span></div>
+        <div class="segs">
+          {% for i in range(1,6) %}<div class="seg {{ ('on-' + m.level) if i <= m.value else '' }}"></div>{% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="horizon">Horizon d'impact · <b>{{ a.radar_fractal.horizon_impact }}</b></div>
+  </div>
+  <div class="footer"><span>Fractal · Média financier</span><span>Glisse →</span></div>
+</div>
+
+<!-- 6 — BIAIS -->
+<div class="slide" data-slide="biais">
+  <div class="grain"></div>
+  <div class="topbar"><div class="kicker">Garde la tête froide</div><div class="step">05</div></div>
+  <div class="accent-line"></div>
+  <div class="body">
+    <div class="block">
+      <div class="label">Le piège psychologique</div>
+      <p class="quote">{{ a.analyse_critique_et_biais.piege_psychologique }}</p>
+    </div>
+    <div class="block">
+      <div class="label">Ce que le marché oublie</div>
+      <p class="quote">{{ a.analyse_critique_et_biais.ce_que_le_marche_oublie }}</p>
+    </div>
+  </div>
+  <div class="footer"><span>Fractal · Média financier</span><span>Glisse →</span></div>
+</div>
+
+<!-- 7 — CATALYSEUR + CTA -->
+<div class="slide" data-slide="cta">
+  <div class="grain"></div>
+  <div class="topbar"><div class="kicker">À surveiller</div><div class="step">06</div></div>
+  <div class="accent-line"></div>
+  <div class="body">
+    <div class="label">Le catalyseur</div>
+    <p class="lead small" style="margin-bottom:70px">{{ a.catalyseur_a_surveiller }}</p>
+    <p class="cta">L'analyse complète + le radar interactif sur <span class="at">Fractal</span>.<br>Lien en bio.</p>
+  </div>
+  <div class="disclaimer">{{ a.disclaimer }}</div>
+</div>
+
+</body>
+</html>
