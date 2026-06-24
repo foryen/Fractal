@@ -23,7 +23,7 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise ValueError("❌ GROQ_API_KEY non définie. Configure-la dans les variables d'environnement.")
 
-MODELE_GROQ     = "llama-3.3-70b-versatile"
+MODELE_GROQ     = "qwen/qwen3.6-27b"
 FICHIER_NEWSLETTER = "newsletter_data.json"
 
 NOMBRE_ARTICLES_SITE  = 15   # Articles affichés sur le site
