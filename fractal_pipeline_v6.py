@@ -35,6 +35,11 @@ DELAI_ARTICLES        = 1    # Secondes entre articles Agent 2
 POIDS_PERTINENCE = 0.70   # 70 % : qualité éditoriale de l'info
 POIDS_FRAICHEUR  = 0.30   # 30 % : âge de l'article (décroît avec le temps)
 
+# --- flux persistant ---
+MAX_REMPLACEMENTS_PAR_RUN = 5    # Stabilité : max 5 nouveaux articles par run
+BOOST_PERSISTANCE         = 0.5  # Bonus pour les articles déjà publiés
+SEUIL_MIN_REMPLACEMENT    = 0.3  # Le nouveau doit dépasser l'ancien d'au moins 0.3
+
 # Durée de vie maximale pour le calcul de fraîcheur (en heures)
 # Au-delà, la fraîcheur est 0. En dessous, elle décroît exponentiellement.
 FRAICHEUR_DUREE_VIE_H = 72   # 3 jours
@@ -373,72 +378,175 @@ def recuperer_et_filtrer_actualites(conn, sources):
 # ==============================================================================
 # SÉLECTION DU MEILLEUR FLUX VIVANT (15 articles)
 # ==============================================================================
-
+def lire_flux_actuel():
+    """
+    Lit le fichier newsletter_data.json actuel pour connaître
+    les articles déjà publiés sur le site (le "top 15 en ligne").
+    Retourne un dict {lien: article_data} pour comparaison rapide.
+    """
+    if not os.path.isfile(FICHIER_NEWSLETTER):
+        return {}
+    
+    try:
+        with open(FICHIER_NEWSLETTER, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        
+        flux = {}
+        for art in data.get("articles", []):
+            lien = art.get("_meta", {}).get("lien_source") or art.get("_meta", {}).get("lien")
+            if lien:
+                flux[lien] = art
+        return flux
+    except Exception as e:
+        print(f"  ⚠️  Impossible de lire le flux actuel : {e}")
+        return {}
+    
 def selectionner_flux_vivant(conn, nouveaux_articles, n=NOMBRE_ARTICLES_SITE):
     """
-    Stratégie du flux vivant :
-    1. Récupère tous les articles déjà analysés par Agent 2 en base (avec contenu_json)
-    2. Recalcule leur score composite avec leur fraîcheur ACTUELLE (ils vieillissent)
-    3. Fusionne avec les nouveaux articles pertinents de cette session
-    4. Trie par score composite décroissant → garde les N meilleurs
-    5. Les nouveaux articles avec un bon score remontent naturellement
+    NOUVELLE LOGIQUE — Flux persistant avec remplacement conditionnel
+    
+    Stratégie :
+    1. On lit le flux actuel (les 15 articles en ligne sur le site)
+    2. On récupère aussi les articles de la base avec contenu_json
+    3. Pour les articles DÉJÀ PUBLIÉS : on applique un boost de persistance
+       (ils gardent leur place sauf si un nouveau les dépasse largement)
+    4. Pour les NOUVEAUX articles : on les compare au plus faible du top actuel
+    5. Remplacements limités à MAX_REMPLACEMENTS_PAR_RUN pour stabilité
     """
-    print("\n📊 Construction du flux vivant...")
-
-    # Récupère tous les articles déjà rédigés (Agent 2) depuis la base
+    print("\n" + "=" * 60)
+    print("  📊 SÉLECTION DU FLUX VIVANT (mode persistant)")
+    print("=" * 60 + "\n")
+    
+    # ── ÉTAPE 1 : Lire le flux actuellement en ligne ──
+    flux_actuel_dict = lire_flux_actuel()
+    print(f"📄 Flux actuel en ligne : {len(flux_actuel_dict)} articles")
+    
+    # ── ÉTAPE 2 : Récupérer TOUS les articles rédigés de la base ──
     rows = conn.execute("""
         SELECT titre, lien, lien_source, date_article, source,
                score_pertinence, contenu_json
         FROM articles
         WHERE contenu_json IS NOT NULL
         ORDER BY score_pertinence DESC
-        LIMIT 100
+        LIMIT 200
     """).fetchall()
-
-    articles_existants = []
+    
+    pool_articles = []
     for row in rows:
         fraicheur = calculer_fraicheur(row["date_article"])
-        composite = calculer_score_composite(row["score_pertinence"], fraicheur)
-        articles_existants.append({
+        composite_base = calculer_score_composite(row["score_pertinence"], fraicheur)
+        
+        # Boost de persistance si l'article est déjà publié
+        est_publie = row["lien"] in flux_actuel_dict or (row["lien_source"] or row["lien"]) in flux_actuel_dict
+        boost = BOOST_PERSISTANCE if est_publie else 0.0
+        composite_final = min(10.0, composite_base + boost)
+        
+        pool_articles.append({
             "titre":            row["titre"],
             "lien":             row["lien"],
             "lien_source":      row["lien_source"] or row["lien"],
             "date":             row["date_article"],
             "source":           row["source"],
             "score_pertinence": row["score_pertinence"],
-            "score_composite":  composite,
+            "score_composite":  round(composite_final, 2),
+            "composite_base":   round(composite_base, 2),
             "contenu_json":     json.loads(row["contenu_json"]),
-            "est_nouveau":      False
+            "est_nouveau":      False,
+            "est_publie":       est_publie,
+            "boost":            boost
         })
-
-    # Marque les nouveaux
+    
+    print(f"🗄️  Pool base de données : {len(pool_articles)} articles rédigés")
+    print(f"   dont {sum(1 for a in pool_articles if a['est_publie'])} déjà publiés (boost +{BOOST_PERSISTANCE})")
+    
+    # ── ÉTAPE 3 : Identifier le "seuil d'entrée" ──
+    # Tri du pool par score composite décroissant
+    pool_tries = sorted(pool_articles, key=lambda x: x["score_composite"], reverse=True)
+    
+    # Le top N actuel forme notre "référence"
+    top_actuel = pool_tries[:n]
+    score_plus_faible_top = top_actuel[-1]["score_composite"] if top_actuel else 0.0
+    
+    print(f"\n🏆 Top {n} actuel — score du plus faible : {score_plus_faible_top:.2f}")
+    print(f"   Seuil d'entrée pour un nouveau : {score_plus_faible_top + SEUIL_MIN_REMPLACEMENT:.2f} minimum")
+    
+    # ── ÉTAPE 4 : Évaluer les nouveaux articles ──
+    nouveaux_candidats = []
     for a in nouveaux_articles:
         a["est_nouveau"] = True
-        a["contenu_json"] = None  # Sera rempli par Agent 2
-
-    # Fusion et tri
-    tous = articles_existants + nouveaux_articles
-    tous_tries = sorted(tous, key=lambda x: x["score_composite"], reverse=True)
-
-    # Dédoublonnage par lien (le nouveau écrase l'ancien si même lien)
+        a["est_publie"] = False
+        a["boost"] = 0.0
+        a["composite_base"] = a["score_composite"]
+        nouveaux_candidats.append(a)
+    
+    # Trier les nouveaux par score composite décroissant
+    nouveaux_candidats = sorted(nouveaux_candidats, key=lambda x: x["score_composite"], reverse=True)
+    
+    # ── ÉTAPE 5 : Remplacements conditionnels ──
+    remplacements = []
+    flux_final = list(top_actuel)  # On part du top actuel
+    nb_remplacements = 0
+    
+    for nouv in nouveaux_candidats:
+        if nb_remplacements >= MAX_REMPLACEMENTS_PAR_RUN:
+            print(f"\n Limite de {MAX_REMPLACEMENTS_PAR_RUN} remplacements atteinte")
+            break
+        
+        # Trouver le plus faible du flux actuel
+        flux_tries = sorted(flux_final, key=lambda x: x["score_composite"])
+        plus_faible = flux_tries[0]
+        
+        # Condition de remplacement
+        seuil_min = plus_faible["score_composite"] + SEUIL_MIN_REMPLACEMENT
+        if nouv["score_composite"] >= seuil_min:
+            # Remplacer
+            flux_final.remove(plus_faible)
+            flux_final.append(nouv)
+            
+            remplacements.append({
+                "entrant": nouv,
+                "sortant": plus_faible
+            })
+            nb_remplacements += 1
+            
+            print(f"\n🔄 REMPLACEMENT #{nb_remplacements}")
+            print(f"   ➕ ENTRE : [{nouv['score_composite']:.2f}] {nouv['titre'][:55]}")
+            print(f"   ➖ SORT  : [{plus_faible['score_composite']:.2f}] {plus_faible['titre'][:55]}")
+        else:
+            # Premier nouveau qui n'entre pas → on arrête (les suivants seront pires)
+            print(f"\n Arrêt : {nouv['titre'][:50]}... ({nouv['score_composite']:.2f}) < seuil ({seuil_min:.2f})")
+            break
+    
+    # ── ÉTAPE 6 : Tri final et dédoublonnage ──
+    flux_final = sorted(flux_final, key=lambda x: x["score_composite"], reverse=True)
+    
+    # Dédoublonnage par lien
     vus = set()
-    flux_final = []
-    for a in tous_tries:
+    flux_dedup = []
+    for a in flux_final:
         if a["lien"] not in vus:
             vus.add(a["lien"])
-            flux_final.append(a)
-        if len(flux_final) >= n:
+            flux_dedup.append(a)
+        if len(flux_dedup) >= n:
             break
-
-    # Identifie ceux qui ont besoin d'être rédigés par Agent 2
-    a_rediger = [a for a in flux_final if a["contenu_json"] is None]
-
-    print(f"   Articles existants réévalués : {len(articles_existants)}")
-    print(f"   Nouveaux entrants pertinents : {len(nouveaux_articles)}")
-    print(f"   Articles à rédiger (Agent 2) : {len(a_rediger)}")
-    print(f"   Flux final : {len(flux_final)} articles\n")
-
-    return flux_final, a_rediger
+    
+    # Articles à rédiger (nouveaux qui sont entrés dans le top)
+    a_rediger = [a for a in flux_dedup if a.get("contenu_json") is None]
+    
+    # ── Résumé final ──
+    print("\n" + "=" * 60)
+    print(f"   RÉSUMÉ DE LA SESSION")
+    print("=" * 60)
+    print(f"  • Nouveaux articles analysés : {len(nouveaux_candidats)}")
+    print(f"  • Remplacements effectués    : {nb_remplacements} / {MAX_REMPLACEMENTS_PAR_RUN} max")
+    print(f"  • Articles à rédiger (Agent2): {len(a_rediger)}")
+    print(f"  • Flux final                 : {len(flux_dedup)} articles")
+    print("=" * 60 + "\n")
+    
+    if nb_remplacements == 0:
+        print("✨ Aucun remplacement : le flux actuel reste stable.\n")
+    
+    return flux_dedup, a_rediger
 
 # ==============================================================================
 # AGENT 2 : RÉDACTEUR EN CHEF

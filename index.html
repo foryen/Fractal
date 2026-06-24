@@ -1,552 +1,349 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fractal • Newsletter</title>
-    <link rel="stylesheet" href="fractal.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal · Newsletter</title>
+  <meta name="description" content="Analyses financières claires, indépendantes et sans concession.">
+  <link rel="stylesheet" href="fractal.css">
+  <link rel="icon" type="image/png" href="fractal_logo.png">
 </head>
-<body class="bg-zinc-950 text-zinc-200 min-h-screen">
+<body>
 
-<header class="site-header" id="siteHeader">
-  <nav class="header-nav">
-    <!-- Logo + Nom -->
-    <a href="index.html" class="logo-container" title="Retour à l'accueil">
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="header-nav">
+      <a href="index.html" class="logo-container">
         <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
-        <span class="logo-text title-font">Fractal</span>
-    </a>
-    <!-- Navigation desktop -->
-    <div class="nav-links">
-      <a href="index.html" class="nav-link" data-page="index">Newsletter</a>
-      <a href="radar.html" class="nav-link" data-page="radar">Radar</a>
-      <a href="archives.html" class="nav-link" data-page="archives">Archives</a>
-      <a href="apropos.html" class="nav-link" data-page="apropos">À propos</a>
+        <span class="logo-text">Fractal</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link active" data-page="index.html">Newsletter</a>
+        <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
+        <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
+        <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
+      </div>
+      <div class="header-actions">
+        <div id="auth-section"></div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-nav-link active">Newsletter</a>
+      <a href="radar.html" class="mobile-nav-link">Radar</a>
+      <a href="archives.html" class="mobile-nav-link">Archives</a>
+      <a href="apropos.html" class="mobile-nav-link">À propos</a>
+      <div id="auth-section-mobile" style="margin-top: var(--space-4);"></div>
     </div>
-    
-    <!-- Zone Auth + Mobile menu -->
-    <div class="header-actions">
-      <div id="auth-section"></div>
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
+  </header>
+
+  <!-- HERO -->
+  <section class="section">
+    <div class="hero-meta">
+      <span class="label">Newsletter</span>
+      <div class="update-badge">
+        <span class="live-dot"></span>
+        <span id="updateTime">Chargement…</span>
+      </div>
+    </div>
+
+    <h1 class="hero-title">Analyses Fractales des Marchés.</h1>
+    <p class="hero-subtitle">
+      Insights clairs, indépendants et sans concession. Générés par IA, validés par une méthodologie rigoureuse.
+    </p>
+
+    <!-- Articles grid -->
+    <div id="articles-grid" class="articles-grid">
+      <div class="skeleton" style="height: 16rem;"></div>
+      <div class="skeleton" style="height: 16rem;"></div>
+      <div class="skeleton" style="height: 16rem;"></div>
+    </div>
+  </section>
+
+  <!-- MODAL -->
+  <div id="articleModal" class="f-modal-overlay" style="display:none;">
+    <div class="f-modal">
+      <button class="f-modal-close" onclick="closeModal()" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
+      <div class="f-modal-body" id="modalContent"></div>
     </div>
-  </nav>
-  
-  <!-- Menu mobile -->
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html" class="mobile-nav-link">Newsletter</a>
-    <a href="radar.html" class="mobile-nav-link">Radar</a>
-    <a href="archives.html" class="mobile-nav-link">Archives</a>
-    <a href="apropos.html" class="mobile-nav-link">À propos</a>
-    <div id="auth-section-mobile" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--zinc-800);"></div>
   </div>
-</header>
-<script>
-document.getElementById('burger').addEventListener('click',()=>{
-    document.getElementById('mobile-nav').classList.toggle('hidden');
-});
-</script>
 
-<!-- ══ HERO ══ -->
-<section class="max-w-7xl mx-auto px-6 pt-20 pb-14 text-center reveal">
-    <div class="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 rounded-3xl px-5 py-2 mb-6">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block live-dot"></span>
-        <span class="text-emerald-400 text-sm font-medium">Flux en direct — trié par pertinence & fraîcheur</span>
-    </div>
-    <!-- Logo détaillé dans le hero -->
-    <div class="flex justify-center mb-6">
-        <img src="fractal_logo2.png" alt="Fractal" class="logo-lg opacity-90">
-    </div>
-    <h1 class="text-6xl md:text-7xl font-bold title-font tracking-tighter leading-none mb-5">
-        Analyses Fractales<br>des Marchés
-    </h1>
-    <p class="text-xl text-zinc-300 max-w-2xl mx-auto mb-3">Insights clairs, indépendants et sans concession</p>
-    <p id="last-update" class="text-zinc-600 text-sm"></p>
-</section>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>
+      Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.
+      Ils ne constituent pas un conseil en investissement personnalisé. Fractal ne détient pas le statut de CIF (AMF).
+      Tout investissement comporte des risques de perte en capital.
+    </p>
+    <p style="margin-top: 1rem;">
+      © 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a>
+    </p>
+  </footer>
 
-<!-- ══ GRILLE ARTICLES ══ -->
-<section class="max-w-7xl mx-auto px-6 pb-24">
-    <div id="skeleton-grid" class="articles-grid mb-6">
-        <div class="skeleton h-80"></div>
-        <div class="skeleton h-72"></div>
-        <div class="skeleton h-72"></div>
-        <div class="skeleton h-72 hidden md:block"></div>
-        <div class="skeleton h-72 hidden md:block"></div>
-        <div class="skeleton h-72 hidden lg:block"></div>
-    </div>
-    <div id="articles-grid" class="hidden articles-grid"></div>
-    <div id="error-msg" class="hidden text-center py-24">
-        <div class="text-6xl mb-5">📡</div>
-        <p class="text-zinc-300 text-xl font-semibold mb-2">Aucune édition disponible</p>
-        <p class="text-zinc-500 text-sm">Le pipeline se met à jour automatiquement. Revenez bientôt.</p>
-    </div>
-</section>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="auth-guard.js"></script>
 
-<!-- ══ MODAL ARTICLE ══ -->
-<div id="article-modal" class="f-modal-overlay hidden" onclick="closeModal(event)">
-    <div class="f-modal" onclick="event.stopPropagation()">
-        <div class="flex items-start justify-between border-b border-zinc-800 px-8 py-6 gap-4">
-            <div>
-                <div id="modal-titre" class="text-2xl font-bold title-font leading-snug"></div>
-                <div id="modal-meta" class="flex items-center gap-3 mt-2 flex-wrap"></div>
+  <script>
+    let allArticles = [];
+
+    async function init() {
+      const user = await FractalAuth.checkAuth(false);
+      FractalAuth.renderAuthUI('auth-section');
+      if (document.getElementById('auth-section-mobile')) {
+        FractalAuth.renderAuthUI('auth-section-mobile');
+      }
+
+      try {
+        const res = await fetch('newsletter_data.json?t=' + Date.now());
+        const data = await res.json();
+        allArticles = data.articles || [];
+        document.getElementById('updateTime').textContent = data.derniere_mise_a_jour || '—';
+        renderArticles(user);
+      } catch (err) {
+        document.getElementById('articles-grid').innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
-            <button onclick="closeModal()" class="text-3xl text-zinc-500 hover:text-white leading-none flex-shrink-0">×</button>
-        </div>
-        <div id="modal-body" class="f-modal-body flex-1 p-8 space-y-7"></div>
-        <div class="border-t border-zinc-800 px-8 py-4 flex items-center justify-between gap-4">
-            <p id="modal-disclaimer" class="text-xs text-zinc-600 leading-relaxed flex-1"></p>
-            <a id="modal-source-link" href="#" target="_blank" rel="noopener"
-               class="flex-shrink-0 flex items-center gap-1.5 text-xs text-emerald-400 hover:text-white transition-colors whitespace-nowrap">
-                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-                Source originale
-            </a>
-        </div>
-    </div>
-</div>
-
-<script>
-// =========================================================================
-    // DONNÉES
-    // =========================================================================
-    let articles = [];
-
-    // =========================================================================
-    // UTILITAIRES
-    // =========================================================================
-    function badgeClass(tendance) {
-        if (!tendance) return 'badge-neutre';
-        const t = tendance.toLowerCase();
-        if (t.includes('hausse') || t === 'haussière') return 'badge-hausse';
-        if (t.includes('baisse') || t === 'baissière') return 'badge-baisse';
-        if (t.includes('incertitude')) return 'badge-incertitude';
-        return 'badge-neutre';
+            <h3>Aucune édition disponible</h3>
+            <p>Le pipeline se met à jour automatiquement. Revenez dans quelques minutes.</p>
+          </div>
+        `;
+      }
     }
 
-    function scoreClass(s) {
-        if (s >= 7)  return 'score-high';
-        if (s >= 4.5) return 'score-mid';
-        return 'score-low';
+    function renderArticles(user) {
+      const grid = document.getElementById('articles-grid');
+      grid.innerHTML = '';
+
+      const isPremium = !!user;
+      const articlesToShow = isPremium ? allArticles : allArticles.slice(0, 5);
+
+      if (articlesToShow.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <h3>Aucune édition disponible</h3>
+            <p>Le pipeline se met à jour automatiquement.</p>
+          </div>
+        `;
+        return;
+      }
+
+      articlesToShow.forEach((article) => {
+        const card = createArticleCard(article, isPremium);
+        grid.appendChild(card);
+      });
+
+      if (!isPremium && allArticles.length > 5) {
+        grid.appendChild(createPremiumBanner());
+      }
     }
 
-    function scoreBarColor(val, max) {
-        const pct = val / max;
-        if (pct >= 0.7) return '#34d399';
-        if (pct >= 0.5) return '#fbbf24';
-        return '#f87171';
+    function createArticleCard(article, isPremium) {
+      const card = document.createElement('div');
+      card.className = 'f-card f-card-interactive reveal';
+      card.onclick = () => openModal(article);
+
+      const meta = article._meta || {};
+      const tendance = article.impact_financier?.tendance_marche || 'Neutre';
+      const badgeClass = getTendanceClass(tendance);
+
+      card.innerHTML = `
+        <div class="article-card">
+          <div class="article-badges">
+            ${meta.est_nouveau ? '<span class="badge badge-new">Nouveau</span>' : ''}
+            <span class="badge badge-${badgeClass}">${tendance}</span>
+          </div>
+          <h3 class="article-title">${article.titre_newsletter || 'Sans titre'}</h3>
+          <p class="article-synthese">${article.synthese_flash || ''}</p>
+          <div class="article-meta">
+            <span>${meta.source || 'Source'} · ${formatDate(meta.date_article)}</span>
+            <span class="article-score">${(meta.score_composite || 0).toFixed(2)}</span>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function createPremiumBanner() {
+      const banner = document.createElement('div');
+      banner.className = 'premium-banner reveal';
+      banner.innerHTML = `
+        <h3>Débloquez l'accès complet</h3>
+        <p>Connectez-vous gratuitement pour accéder aux ${allArticles.length} analyses du jour, aux archives et au radar en temps réel.</p>
+        <div class="premium-features">
+          <div class="premium-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            15 analyses quotidiennes
+          </div>
+          <div class="premium-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Archives illimitées
+          </div>
+          <div class="premium-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Radar temps réel
+          </div>
+          <div class="premium-feature">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+            100% gratuit
+          </div>
+        </div>
+        <a href="login.html" class="btn btn-primary btn-lg">Se connecter gratuitement</a>
+      `;
+      return banner;
+    }
+
+    function openModal(article) {
+      const user = FractalAuth.getUser();
+      if (!user) { window.location.href = 'login.html'; return; }
+
+      const meta = article._meta || {};
+      const impact = article.impact_financier || {};
+      const biais = article.analyse_critique_et_biais || {};
+      const radar = article.radar_fractal || {};
+
+      document.getElementById('modalContent').innerHTML = `
+        <div class="article-badges" style="margin-bottom: 1rem;">
+          <span class="badge badge-${getTendanceClass(impact.tendance_marche)}">${impact.tendance_marche || 'Neutre'}</span>
+          <span style="color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace;">
+            ${meta.source} · ${formatDate(meta.date_article)}
+          </span>
+        </div>
+
+        <h2 style="font-family: 'Space Grotesk'; font-size: 1.75rem; margin-bottom: 1rem; letter-spacing: -0.03em;">${article.titre_newsletter}</h2>
+        <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.65; margin-bottom: 2rem;">${article.synthese_flash}</p>
+
+        <div class="modal-section">
+          <h4>Contexte</h4>
+          <p>${article.contexte_macro_micro || ''}</p>
+        </div>
+
+        <div class="modal-section">
+          <h4>Mécanique de l'événement</h4>
+          <p>${article.mecanique_de_l_evenement || ''}</p>
+        </div>
+
+        <div class="modal-section">
+          <h4>Impact financier</h4>
+          <p><strong>Actifs concernés :</strong> ${(impact.actifs_concernes || []).join(', ')}</p>
+          <p>${impact.explication_impact || ''}</p>
+        </div>
+
+        <div class="modal-section">
+          <h4>Biais psychologique</h4>
+          <p><strong>Piège :</strong> ${biais.piege_psychologique || ''}</p>
+          <p><strong>Ce que le marché oublie :</strong> ${biais.ce_que_le_marche_oublie || ''}</p>
+        </div>
+
+        <div class="modal-section">
+          <h4>Radar Fractal</h4>
+          <div class="radar-grid">
+            <div class="radar-item">
+              <div class="label">Volatilité</div>
+              <div class="value">${radar.volatilite_attendue || 0}/5</div>
+            </div>
+            <div class="radar-item">
+              <div class="label">Risque</div>
+              <div class="value">${radar.risque_systemique || 0}/5</div>
+            </div>
+            <div class="radar-item">
+              <div class="label">Fiabilité</div>
+              <div class="value">${radar.fiabilite_information || 0}/5</div>
+            </div>
+          </div>
+          <p style="margin-top: 1rem;"><strong>Horizon :</strong> ${radar.horizon_impact || '—'}</p>
+        </div>
+
+        <div class="modal-section">
+          <h4>Catalyseur à surveiller</h4>
+          <p>${article.catalyseur_a_surveiller || ''}</p>
+        </div>
+
+        <div class="modal-footer-note">
+          <p>${article.disclaimer || ''}</p>
+        </div>
+
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <a href="${meta.lien_source || '#'}" target="_blank" rel="noopener" class="btn btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+            Source originale
+          </a>
+        </div>
+      `;
+
+      document.getElementById('articleModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('articleModal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    document.getElementById('articleModal').addEventListener('click', (e) => {
+      if (e.target.id === 'articleModal') closeModal();
+    });
+
+    function getTendanceClass(t) {
+      if (!t) return 'neutre';
+      const x = t.toLowerCase();
+      if (x.includes('hauss')) return 'hausse';
+      if (x.includes('baiss')) return 'baisse';
+      if (x.includes('incert')) return 'incertitude';
+      return 'neutre';
     }
 
     function formatDate(dateStr) {
-        if (!dateStr) return '';
-        try {
-            return new Date(dateStr).toLocaleDateString('fr-FR', {
-                day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
-            });
-        } catch { return dateStr; }
-    }
-
-    function tempsEcoule(dateStr) {
-        if (!dateStr) return '';
-        try {
-            const diff = Date.now() - new Date(dateStr).getTime();
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            if (h > 48) return `il y a ${Math.floor(h/24)}j`;
-            if (h >= 1) return `il y a ${h}h`;
-            return `il y a ${m}min`;
-        } catch { return ''; }
-    }
-
-    // =========================================================================
-    // CHARGEMENT
-    // =========================================================================
-    async function chargerNewsletter() {
-        try {
-            const res = await fetch(`newsletter_data.json?v=${Date.now()}`);
-            if (!res.ok) throw new Error('Fichier introuvable');
-            const data = await res.json();
-            articles = data.articles || [];
-
-            if (data.derniere_mise_a_jour) {
-                document.getElementById('last-update').textContent =
-                    `Dernière mise à jour : ${data.derniere_mise_a_jour}`;
-            }
-            if (!articles.length) throw new Error('Vide');
-            afficherArticles();
-        } catch (e) {
-            console.warn('newsletter_data.json :', e.message);
-            document.getElementById('skeleton-grid').classList.add('hidden');
-            document.getElementById('error-msg').classList.remove('hidden');
-        }
-    }
-
-    // =========================================================================
-    // RENDU GRILLE
-    // =========================================================================
-    function afficherArticles() {
-        document.getElementById('skeleton-grid').classList.add('hidden');
-        const grid = document.getElementById('articles-grid');
-        grid.classList.remove('hidden');
-        grid.innerHTML = '';
-
-        articles.forEach((art, i) => {
-            const meta      = art._meta || {};
-            const tendance  = art.impact_financier?.tendance_marche || 'Neutre';
-            const volatilite = art.radar_fractal?.volatilite_attendue || 0;
-            const horizon   = art.radar_fractal?.horizon_impact || '';
-            const actifs    = art.impact_financier?.actifs_concernes || [];
-            const score     = meta.score_composite || 0;
-            const pertinence = meta.score_pertinence || 0;
-            const estNouveau = meta.est_nouveau || false;
-            const date      = meta.date_article || '';
-            const isHero    = i === 0;
-
-            const card = document.createElement('div');
-            card.className = [
-                'article-card border border-zinc-700/80 rounded-3xl p-7 flex flex-col gap-4 cursor-pointer reveal',
-                isHero ? 'card-hero md:col-span-2 lg:col-span-1' : ''
-            ].join(' ');
-
-            card.innerHTML = `
-                <!-- En-tête : badges + score -->
-                <div class="flex items-start justify-between gap-2">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="px-3 py-1 text-xs rounded-2xl font-medium ${badgeClass(tendance)}">${tendance}</span>
-                        ${estNouveau ? '<span class="px-3 py-1 text-xs rounded-2xl font-semibold badge-new">🆕 Nouveau</span>' : ''}
-                        ${isHero ? '<span class="px-3 py-1 text-xs rounded-2xl font-semibold bg-emerald-900/40 text-emerald-300 border border-emerald-700/40">✦ Top news</span>' : ''}
-                    </div>
-                    <!-- Score composite -->
-                    <div class="text-right flex-shrink-0">
-                        <div class="text-xs text-zinc-600 mb-0.5">Score</div>
-                        <div class="font-mono font-bold text-lg ${scoreClass(score)}">${score.toFixed(2)}</div>
-                    </div>
-                </div>
-
-                <!-- Titre -->
-                <h3 class="font-bold title-font text-lg leading-snug ${isHero ? 'text-xl' : ''}">
-                    ${art.titre_newsletter || 'Sans titre'}
-                </h3>
-
-                <!-- Synthèse flash -->
-                <p class="text-zinc-400 text-sm leading-relaxed line-clamp-3">${art.synthese_flash || ''}</p>
-
-                <!-- Actifs concernés -->
-                ${actifs.length ? `
-                <div class="flex flex-wrap gap-1.5">
-                    ${actifs.slice(0,4).map(a =>
-                        `<span class="px-2.5 py-0.5 bg-zinc-800 border border-zinc-700 rounded-xl text-xs font-mono text-zinc-300">${a}</span>`
-                    ).join('')}
-                </div>` : ''}
-
-                <!-- Footer carte -->
-                <div class="flex items-center justify-between mt-auto pt-3 border-t border-zinc-800 gap-2">
-                    <div class="flex items-center gap-3 text-xs text-zinc-600 min-w-0">
-                        <span class="truncate max-w-[120px]">📍 ${meta.source || ''}</span>
-                        ${date ? `<span>⏱ ${tempsEcoule(date)}</span>` : ''}
-                    </div>
-                    <button class="text-emerald-400 hover:text-white text-xs font-semibold transition-colors whitespace-nowrap">
-                        Lire l'analyse →
-                    </button>
-                </div>
-            `;
-
-            card.addEventListener('click', () => ouvrirArticle(i));
-            grid.appendChild(card);
-        });
-
-        // Scroll reveal
-        const obs = new IntersectionObserver(entries => {
-            entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
-        }, { threshold: 0.08 });
-        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-    }
-
-    // =========================================================================
-    // MODAL ARTICLE COMPLET
-    // =========================================================================
-    function barreScore(label, val, max) {
-        if (val == null) return '';
-        const pct = Math.round((val / max) * 100);
-        return `
-        <div>
-            <div class="flex justify-between text-xs text-zinc-500 mb-1">
-                <span>${label}</span>
-                <span class="font-medium text-zinc-300">${val}/${max}</span>
-            </div>
-            <div class="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                <div class="h-full rounded-full score-bar" style="width:${pct}%;background:${scoreBarColor(val,max)}"></div>
-            </div>
-        </div>`;
-    }
-
-    function ouvrirArticle(i) {
-        const art = articles[i];
-        if (!art) return;
-
-        const meta   = art._meta || {};
-        const radar  = art.radar_fractal || {};
-        const impact = art.impact_financier || {};
-        const biais  = art.analyse_critique_et_biais || {};
-
-        // Titre + meta header
-        document.getElementById('modal-titre').textContent = art.titre_newsletter || '';
-        document.getElementById('modal-meta').innerHTML = `
-            ${meta.source ? `<span class="text-xs text-zinc-500 bg-zinc-800 px-2.5 py-1 rounded-xl">📍 ${meta.source}</span>` : ''}
-            ${meta.date_article ? `<span class="text-xs text-zinc-500">🕐 ${formatDate(meta.date_article)}</span>` : ''}
-            ${meta.score_composite ? `<span class="text-xs font-mono font-bold ${scoreClass(meta.score_composite)}">Score ${meta.score_composite.toFixed(2)}/10</span>` : ''}
-            ${meta.score_pertinence ? `<span class="text-xs text-zinc-600">Pertinence ${meta.score_pertinence.toFixed(1)}/10</span>` : ''}
-        `;
-
-        // Lien source
-        const sourceLink = document.getElementById('modal-source-link');
-        sourceLink.href = meta.lien_source || '#';
-        sourceLink.style.display = meta.lien_source ? 'flex' : 'none';
-
-        // Disclaimer
-        document.getElementById('modal-disclaimer').textContent = art.disclaimer || '';
-
-        // Corps
-        document.getElementById('modal-body').innerHTML = `
-
-            <!-- Synthèse flash -->
-            <p class="text-emerald-400 text-lg font-semibold leading-snug">${art.synthese_flash || ''}</p>
-
-            <!-- Contexte -->
-            <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Contexte</h4>
-                <p class="text-zinc-300 text-sm leading-relaxed">${art.contexte_macro_micro || ''}</p>
-            </div>
-
-            <!-- Mécanique -->
-            <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">Ce qui se passe</h4>
-                <p class="text-zinc-300 text-sm leading-relaxed">${art.mecanique_de_l_evenement || ''}</p>
-            </div>
-
-            <!-- Impact marché -->
-            <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-5">
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">Impact marché</h4>
-                <div class="flex flex-wrap items-center gap-2 mb-3">
-                    <span class="px-3 py-1 text-xs rounded-2xl font-medium ${badgeClass(impact.tendance_marche)}">${impact.tendance_marche || 'Neutre'}</span>
-                    ${(impact.actifs_concernes || []).map(a =>
-                        `<span class="px-2.5 py-0.5 bg-zinc-800 border border-zinc-700 rounded-xl text-xs font-mono text-zinc-300">${a}</span>`
-                    ).join('')}
-                </div>
-                <p class="text-zinc-400 text-sm leading-relaxed">${impact.explication_impact || ''}</p>
-            </div>
-
-            <!-- Radar Fractal -->
-            <div>
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-3">Radar Fractal</h4>
-                <div class="space-y-2.5">
-                    ${barreScore('Volatilité attendue',    radar.volatilite_attendue,    5)}
-                    ${barreScore('Risque systémique',      radar.risque_systemique,       5)}
-                    ${barreScore('Fiabilité de la source', radar.fiabilite_information,   5)}
-                </div>
-                ${radar.horizon_impact ? `
-                <p class="text-zinc-500 text-xs mt-3">
-                    ⏱ Horizon : <span class="text-zinc-300">${radar.horizon_impact}</span>
-                </p>` : ''}
-            </div>
-
-            <!-- Analyse critique -->
-            ${biais.piege_psychologique || biais.ce_que_le_marche_oublie ? `
-            <div class="bg-amber-950/25 border border-amber-800/30 rounded-2xl p-5">
-                <h4 class="text-[10px] font-bold uppercase tracking-widest text-amber-500 mb-3">⚠️ Analyse critique</h4>
-                ${biais.piege_psychologique ? `
-                <p class="text-sm text-zinc-300 mb-2">
-                    <span class="text-amber-400 font-semibold">Piège : </span>${biais.piege_psychologique}
-                </p>` : ''}
-                ${biais.ce_que_le_marche_oublie ? `
-                <p class="text-sm text-zinc-300">
-                    <span class="text-amber-400 font-semibold">Ce qu'on oublie : </span>${biais.ce_que_le_marche_oublie}
-                </p>` : ''}
-            </div>` : ''}
-
-            <!-- Catalyseur -->
-            ${art.catalyseur_a_surveiller ? `
-            <div class="flex gap-3 items-start bg-zinc-950 border border-zinc-800 rounded-2xl p-5">
-                <span class="text-emerald-400 text-2xl">🎯</span>
-                <div>
-                    <h4 class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">À surveiller</h4>
-                    <p class="text-sm text-zinc-300">${art.catalyseur_a_surveiller}</p>
-                </div>
-            </div>` : ''}
-        `;
-
-        document.getElementById('article-modal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal(e) {
-        if (e && e.target !== document.getElementById('article-modal')) return;
-        document.getElementById('article-modal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-    window.closeModal = closeModal;
-
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') {
-            document.getElementById('article-modal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-    });
-
-    // =========================================================================
-    // INIT
-    // =========================================================================
-    window.addEventListener('DOMContentLoaded', () => {
-        chargerNewsletter();
-        const obs = new IntersectionObserver(
-            entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }),
-            { threshold: 0.1 }
-        );
-        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-    });
-</script>
-
-<!-- ══ FOOTER LÉGAL ══ -->
-<footer class="site-footer">
-    <p>
-        Fractal est un média de vulgarisation financière. Les contenus publiés sont fournis à titre informatif et éducatif uniquement.<br>
-        Ils ne constituent en aucun cas un conseil en investissement personnalisé. Fractal ne détient pas le statut de CIF (AMF).<br>
-        Tout investissement comporte des risques de perte en capital.
-    </p>
-    <p class="mt-4">
-        © 2025 Fractal ·
-        <a href="apropos.html">Mentions légales</a> ·
-        <a href="apropos.html">À propos</a>
-    </p>
-</footer>
-
-<!-- ══ SCROLL REVEAL COMMUN ══ -->
-<script>
-(function(){
-    const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-})();
-</script>
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
-<script>
-// ═══════════════════════════════════════════
-// FIREBASE CONFIG
-// ═══════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyBSlXOeyDxVKUFBBkPTMbsS_oY6kADkbMg",
-  authDomain: "fractal-86f1f.firebaseapp.com",
-  projectId: "fractal-86f1f",
-  storageBucket: "fractal-86f1f.firebasestorage.app",
-  messagingSenderId: "954198010037",
-  appId: "1:954198010037:web:3548437da32d3a34d7b6fc"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-firebase.auth().languageCode = 'fr';
-
-// ═══════════════════════════════════════════
-// GESTION AUTH HEADER
-// ═══════════════════════════════════════════
-firebase.auth().onAuthStateChanged((user) => {
-  const authSection = document.getElementById('auth-section');
-  if (!authSection) return;
-
-  if (user) {
-    // ✅ UTILISATEUR CONNECTÉ
-    const displayName = user.displayName || user.email.split('@')[0];
-    const initial = displayName[0].toUpperCase();
-    
-    authSection.innerHTML = `
-      <div style="display:flex;align-items:center;gap:0.5rem;">
-        <a href="compte.html" class="auth-user-badge">
-          <div class="auth-avatar">${initial}</div>
-          <span class="auth-username">${displayName}</span>
-        </a>
-        <button id="logoutBtn" class="logout-btn" title="Se déconnecter">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
-          </svg>
-        </button>
-      </div>
-    `;
-    
-    // Attache le bouton logout
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (!dateStr) return '—';
       try {
-        await firebase.auth().signOut();
-        window.location.href = 'login.html';
-      } catch (err) {
-        console.error('Erreur déconnexion:', err);
-      }
-    });
-    
-  } else {
-    // ❌ UTILISATEUR NON CONNECTÉ
-    authSection.innerHTML = `
-      <a href="login.html" class="btn-primary" style="padding:0.5rem 1.25rem;font-size:0.875rem;">
-        Se connecter
-      </a>
-    `;
-  }
-});
-</script>
-<script>
-// ═══════════════════════════════════════════
-// HEADER UX ENHANCEMENTS
-// ═══════════════════════════════════════════
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now - date) / (1000 * 60 * 60));
+        if (diff < 1) return 'il y a moins d\'1h';
+        if (diff < 24) return `il y a ${diff}h`;
+        if (diff < 48) return 'hier';
+        return `il y a ${Math.floor(diff / 24)}j`;
+      } catch { return '—'; }
+    }
 
-// 1. Effet de scroll sur le header
-const header = document.getElementById('siteHeader');
-let lastScroll = 0;
+    // Mobile menu
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', () => {
+        mobileBtn.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+      });
+    }
 
-window.addEventListener('scroll', () => {
-  const currentScroll = window.pageYOffset;
-  
-  if (currentScroll > 50) {
-    header.classList.add('scrolled');
-  } else {
-    header.classList.remove('scrolled');
-  }
-  
-  lastScroll = currentScroll;
-});
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
 
-// 2. Menu mobile toggle
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const mobileMenu = document.getElementById('mobileMenu');
+    function setupReveal() {
+      setTimeout(() => {
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      }, 100);
+    }
 
-if (mobileMenuBtn && mobileMenu) {
-  mobileMenuBtn.addEventListener('click', () => {
-    mobileMenuBtn.classList.toggle('active');
-    mobileMenu.classList.toggle('active');
-  });
-  
-  // Fermer le menu au clic sur un lien
-  mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenuBtn.classList.remove('active');
-      mobileMenu.classList.remove('active');
-    });
-  });
-}
-
-// 3. Marquer la page active
-const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
-  const href = link.getAttribute('href');
-  if (href === currentPage || (currentPage === '' && href === 'index.html')) {
-    link.classList.add('active');
-  }
-});
-</script>
+    init().then(setupReveal);
+  </script>
 </body>
 </html>

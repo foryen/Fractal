@@ -1,762 +1,279 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fractal • Radar</title>
-    <link rel="stylesheet" href="fractal.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal · Radar</title>
+  <meta name="description" content="Cours en temps réel des marchés financiers.">
+  <link rel="stylesheet" href="fractal.css">
+  <link rel="icon" type="image/png" href="fractal_logo.png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-zinc-950 text-zinc-200 min-h-screen">
-<!-- Firebase + Auth Guard -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="auth-guard.js"></script>
+<body>
 
-<script>
-  // Cache le contenu tant que l'auth n'est pas vérifiée
-  document.body.style.visibility = 'hidden';
-  
-  FractalAuth.checkAuth(true).then(user => {
-    document.body.style.visibility = 'visible';
-    FractalAuth.renderAuthUI('auth-section');
-  });
-</script>
-<header class="site-header" id="siteHeader">
-  <nav class="header-nav">
-    <!-- Logo + Nom -->
-    <a href="index.html" class="logo-container" title="Retour à l'accueil">
-      <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
-      <span class="logo-text title-font">Fractal</span>
-    </a>
-    
-    <!-- Navigation desktop -->
-    <div class="nav-links">
-      <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
-      <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
-      <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
-      <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
-    </div>
-    
-    <!-- Zone Auth + Menu mobile -->
-    <div class="header-actions">
-      <div id="auth-section">
-        <div class="skeleton" style="width:6rem;height:2rem;border-radius:1rem;"></div>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="header-nav">
+      <a href="index.html" class="logo-container">
+        <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
+        <span class="logo-text">Fractal</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
+        <a href="radar.html" class="nav-link active" data-page="radar.html">Radar</a>
+        <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
+        <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
       </div>
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
-  
-  <!-- Menu mobile (dropdown) -->
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html" class="mobile-nav-link" data-page="index.html">Newsletter</a>
-    <a href="radar.html" class="mobile-nav-link" data-page="radar.html">Radar</a>
-    <a href="archives.html" class="mobile-nav-link" data-page="archives.html">Archives</a>
-    <a href="apropos.html" class="mobile-nav-link" data-page="apropos.html">À propos</a>
-    <div id="auth-section-mobile"></div>
-  </div>
-</header>
-<script>
-const burger = document.getElementById('burger');
-if (burger) {
-  burger.addEventListener('click', () => {
-    const mobileNav = document.getElementById('mobile-nav');
-    if (mobileNav) {
-      mobileNav.classList.toggle('hidden');
-    }
-  });
-}
-</script>
-
-
-<!-- ══ TICKER ══ -->
-<div class="border-b border-zinc-800 bg-zinc-900/50 overflow-hidden py-2.5">
-    <div id="ticker-content" class="ticker-track inline-flex gap-10 text-xs font-mono text-zinc-400 px-6">
-        <span class="text-zinc-600">Chargement des cours…</span>
-    </div>
-</div>
-
-<!-- ══ HERO ══ -->
-<section class="max-w-7xl mx-auto px-6 pt-14 pb-8 reveal">
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-            <div class="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 rounded-3xl px-4 py-1.5 mb-4">
-                <span class="live-dot w-2 h-2 rounded-full bg-emerald-400 inline-block"></span>
-                <span class="text-emerald-400 text-xs font-medium">Données Finnhub · refresh <span id="refresh-label">30s</span></span>
-            </div>
-            <!-- Logo détaillé dans le hero Radar -->
-            <div class="flex items-center gap-4 mb-3">
-                <img src="fractal_logo2.png" alt="Fractal" class="h-14 w-auto opacity-90">
-                <h1 class="text-5xl md:text-6xl font-bold title-font tracking-tighter leading-none">
-                    Radar <span class="text-emerald-400">Fractal</span>
-                </h1>
-            </div>
-            <p class="text-zinc-400 max-w-lg text-sm">Cours en temps réel — cliquez sur un actif pour afficher son graphique.</p>
-        </div>
-        <div class="flex flex-col gap-3 items-end">
-            <div class="flex flex-wrap gap-2 justify-end">
-                <button class="filter-btn active" data-filter="tous">Tous</button>
-                <button class="filter-btn" data-filter="indices">Indices</button>
-                <button class="filter-btn" data-filter="actions">Actions</button>
-                <button class="filter-btn" data-filter="crypto">Crypto</button>
-                <button class="filter-btn" data-filter="forex">Forex</button>
-            </div>
-            <div class="flex items-center gap-3 text-xs text-zinc-500">
-                <span>Refresh dans <span id="countdown-sec" class="text-zinc-300 font-mono">30</span>s</span>
-                <div class="w-32 h-0.5 bg-zinc-800 rounded-full overflow-hidden">
-                    <div id="countdown-bar" class="h-full bg-emerald-500 rounded-full" style="width:100%;transition:width 1s linear"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══ GRAPHIQUE ══ -->
-<section id="chart-panel" class="chart-panel hidden max-w-7xl mx-auto px-6 mb-8 p-6">
-    <div class="flex items-start justify-between mb-4 gap-4 flex-wrap">
-        <div>
-            <div id="chart-name" class="text-2xl font-bold title-font"></div>
-            <div id="chart-sub" class="text-zinc-500 text-sm mt-0.5"></div>
-        </div>
-        <div class="text-right">
-            <div id="chart-price" class="text-3xl font-bold font-mono title-font"></div>
-            <div id="chart-change" class="text-sm font-semibold mt-0.5"></div>
-        </div>
-    </div>
-    <div class="flex gap-2 mb-4 flex-wrap">
-        <button class="period-btn active-period" data-res="D" data-days="30">1M</button>
-        <button class="period-btn" data-res="D" data-days="90">3M</button>
-        <button class="period-btn" data-res="D" data-days="180">6M</button>
-        <button class="period-btn" data-res="D" data-days="365">1A</button>
-    </div>
-    <div class="relative h-64 md:h-80">
-        <canvas id="price-chart"></canvas>
-        <div id="chart-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/90 rounded-2xl gap-3">
-            <div class="spinner w-6 h-6"></div>
-            <span class="text-zinc-500 text-sm" id="chart-loading-msg">Chargement…</span>
-        </div>
-    </div>
-    <div id="chart-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5"></div>
-</section>
-
-<!-- ══ GRILLE ACTIFS ══ -->
-<section class="max-w-7xl mx-auto px-6 pb-24">
-    <div id="skeleton-grid" class="assets-grid mb-6">
-        <div class="skeleton h-48"></div><div class="skeleton h-48"></div>
-        <div class="skeleton h-48"></div><div class="skeleton h-48"></div>
-        <div class="skeleton h-48"></div><div class="skeleton h-48"></div>
-    </div>
-    <div id="assets-grid" class="hidden assets-grid"></div>
-</section>
-
-<script>
-// ══════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════
-const FINNHUB_KEY      = "d8rj8t1r01qnkitnk77gd8rj8t1r01qnkitnk780";
-const REFRESH_SEC      = 30;
-const BASE             = "https://finnhub.io/api/v1";
-
-// ══════════════════════════════════════════
-// ACTIFS
-// Chaque actif a :
-//   sym      : symbole pour /quote (actions/crypto)
-//   symChart : symbole pour les candles (peut différer)
-//   type     : "stock" | "crypto" | "forex"
-//   forexPair: { base, quote } pour le forex uniquement
-// ══════════════════════════════════════════
-const ACTIFS = [
-    // ── Indices (ETFs qui répliquent les indices — compatibles Finnhub free)
-    { sym:"EWQ",      nom:"CAC 40",        cat:"indices", devise:"$",  icone:"fa-chart-line",      desc:"iShares MSCI France",   type:"stock" },
-    { sym:"EWG",      nom:"DAX",           cat:"indices", devise:"$",  icone:"fa-chart-line",      desc:"iShares MSCI Germany",  type:"stock" },
-    { sym:"QQQ",      nom:"NASDAQ 100",    cat:"indices", devise:"$",  icone:"fa-chart-line",      desc:"Invesco QQQ ETF",       type:"stock" },
-    { sym:"SPY",      nom:"S&P 500",       cat:"indices", devise:"$",  icone:"fa-chart-line",      desc:"SPDR S&P 500 ETF",      type:"stock" },
-    { sym:"DIA",      nom:"Dow Jones",     cat:"indices", devise:"$",  icone:"fa-chart-line",      desc:"SPDR Dow Jones ETF",    type:"stock" },
-
-    // ── Actions US
-    { sym:"AAPL",  nom:"Apple",      cat:"actions", devise:"$", icone:"fa-brands fa-apple",    desc:"NASDAQ",   type:"stock" },
-    { sym:"NVDA",  nom:"Nvidia",     cat:"actions", devise:"$", icone:"fa-microchip",          desc:"NASDAQ",   type:"stock" },
-    { sym:"MSFT",  nom:"Microsoft",  cat:"actions", devise:"$", icone:"fa-brands fa-windows",  desc:"NASDAQ",   type:"stock" },
-    { sym:"TSLA",  nom:"Tesla",      cat:"actions", devise:"$", icone:"fa-car",                desc:"NASDAQ",   type:"stock" },
-    { sym:"META",  nom:"Meta",       cat:"actions", devise:"$", icone:"fa-brands fa-meta",     desc:"NASDAQ",   type:"stock" },
-
-    // ── Actions FR (Euronext — suffixe .PA)
-    { sym:"MC.PA",  nom:"LVMH",          cat:"actions", devise:"€", icone:"fa-gem",     desc:"Euronext Paris", type:"stock" },
-    { sym:"TTE.PA", nom:"TotalEnergies", cat:"actions", devise:"€", icone:"fa-oil-well",desc:"Euronext Paris", type:"stock" },
-    { sym:"AIR.PA", nom:"Airbus",        cat:"actions", devise:"€", icone:"fa-plane",   desc:"Euronext Paris", type:"stock" },
-
-    // ── Crypto (endpoint /crypto/candle, quote via /quote)
-    { sym:"BINANCE:BTCUSDT", nom:"Bitcoin",  cat:"crypto", devise:"$", icone:"fa-brands fa-bitcoin", desc:"BTC / USDT", type:"crypto", symChart:"BINANCE:BTCUSDT" },
-    { sym:"BINANCE:ETHUSDT", nom:"Ethereum", cat:"crypto", devise:"$", icone:"fa-cube",              desc:"ETH / USDT", type:"crypto", symChart:"BINANCE:ETHUSDT" },
-    { sym:"BINANCE:SOLUSDT", nom:"Solana",   cat:"crypto", devise:"$", icone:"fa-sun",               desc:"SOL / USDT", type:"crypto", symChart:"BINANCE:SOLUSDT" },
-    { sym:"BINANCE:BNBUSDT", nom:"BNB",      cat:"crypto", devise:"$", icone:"fa-circle-dot",        desc:"BNB / USDT", type:"crypto", symChart:"BINANCE:BNBUSDT" },
-
-    // ── Forex (rates via /forex/rates, candles via /forex/candle)
-    { sym:null, nom:"EUR/USD", cat:"forex", devise:"", icone:"fa-euro-sign",    desc:"Euro / Dollar",      type:"forex", forexPair:{base:"EUR",quote:"USD"}, symChart:"OANDA:EUR_USD" },
-    { sym:null, nom:"GBP/USD", cat:"forex", devise:"", icone:"fa-sterling-sign",desc:"Livre / Dollar",     type:"forex", forexPair:{base:"GBP",quote:"USD"}, symChart:"OANDA:GBP_USD" },
-    { sym:null, nom:"USD/JPY", cat:"forex", devise:"", icone:"fa-yen-sign",     desc:"Dollar / Yen",       type:"forex", forexPair:{base:"USD",quote:"JPY"}, symChart:"OANDA:USD_JPY" },
-    { sym:null, nom:"USD/CHF", cat:"forex", devise:"", icone:"fa-franc-sign",   desc:"Dollar / Franc CH",  type:"forex", forexPair:{base:"USD",quote:"CHF"}, symChart:"OANDA:USD_CHF" },
-];
-
-// ══════════════════════════════════════════
-// ÉTAT
-// ══════════════════════════════════════════
-let prixData      = {};   // { sym/nomForex : { c, d, dp, h, l, o, pc } }
-let forexRates    = {};   // { "EUR": 1.08, "GBP": 0.86, … } (base USD)
-let filtreActif   = "tous";
-let selectedSym   = null;
-let chartInstance = null;
-let countdownLeft = REFRESH_SEC;
-let countdownInterval = null;
-let refreshInterval   = null;
-
-// ══════════════════════════════════════════
-// FETCH HELPERS
-// ══════════════════════════════════════════
-async function api(path) {
-    try {
-        const r = await fetch(`${BASE}${path}&token=${FINNHUB_KEY}`);
-        if (!r.ok) return null;
-        return await r.json();
-    } catch { return null; }
-}
-
-// Quote actions/crypto
-async function fetchQuote(sym) {
-    const d = await api(`/quote?symbol=${encodeURIComponent(sym)}`);
-    if (!d || !d.c || d.c === 0) return null;
-    return d;
-}
-
-// Taux forex (base USD)
-async function fetchForexRates() {
-    const d = await api(`/forex/rates?base=USD`);
-    if (!d || !d.quote) return;
-    forexRates = d.quote;
-}
-
-// Candles selon le type d'actif
-async function fetchCandles(actif, resolution, from, to) {
-    let endpoint, sym;
-    if (actif.type === "crypto") {
-        endpoint = "/crypto/candle";
-        sym = actif.symChart;
-    } else if (actif.type === "forex") {
-        endpoint = "/forex/candle";
-        sym = actif.symChart;
-    } else {
-        endpoint = "/stock/candle";
-        sym = actif.sym;
-    }
-    const d = await api(`${endpoint}?symbol=${encodeURIComponent(sym)}&resolution=${resolution}&from=${from}&to=${to}`);
-    if (!d || d.s !== "ok" || !d.t || d.t.length < 2) return null;
-    return d;
-}
-
-// ══════════════════════════════════════════
-// CHARGEMENT DE TOUS LES PRIX
-// ══════════════════════════════════════════
-async function chargerTousPrix() {
-    // Forex via rates endpoint (base USD)
-    await fetchForexRates();
-
-    // Actions + crypto via /quote
-    const promises = ACTIFS
-        .filter(a => a.sym)
-        .map(async a => {
-            const q = await fetchQuote(a.sym);
-            if (q) prixData[a.sym] = q;
-        });
-    await Promise.all(promises);
-
-    // Calcule les paires forex depuis les rates
-    ACTIFS.filter(a => a.type === "forex").forEach(a => {
-        const { base, quote } = a.forexPair;
-        const rateBase  = forexRates[base]  || null;
-        const rateQuote = forexRates[quote] || null;
-        if (!rateBase || !rateQuote) return;
-
-        // Le taux est en base USD : EUR/USD = 1 / rates["EUR"]
-        let price;
-        if (quote === "USD") {
-            price = 1 / rateBase;
-        } else if (base === "USD") {
-            price = rateQuote;
-        } else {
-            price = rateQuote / rateBase;
-        }
-
-        // Finnhub forex/rates ne donne pas la variation journalière
-        // On stocke le cours pur, variation marquée N/A
-        prixData[a.nom] = { c: price, d: null, dp: null, h: null, l: null, o: null, pc: null };
-    });
-}
-
-// ══════════════════════════════════════════
-// TICKER
-// ══════════════════════════════════════════
-function mettreAJourTicker() {
-    const items = ACTIFS.map(a => {
-        const key = a.type === "forex" ? a.nom : a.sym;
-        const q = prixData[key];
-        if (!q) return `<span class="mx-6 text-zinc-600">${a.nom} —</span>`;
-        const dp = q.dp;
-        const prix = formaterPrix(q.c, a.devise, a.type);
-        if (dp == null) {
-            return `<span class="mx-6">${a.nom} <span class="text-zinc-300">${prix}</span></span>`;
-        }
-        const color = dp >= 0 ? "#34d399" : "#f87171";
-        const sign  = dp >= 0 ? "+" : "";
-        return `<span class="mx-6">${a.nom} <span style="color:${color}">${sign}${dp.toFixed(2)}%</span></span>`;
-    }).join('');
-    const t = document.getElementById('ticker-content');
-    t.innerHTML = items + items;
-}
-
-// ══════════════════════════════════════════
-// FORMATAGE
-// ══════════════════════════════════════════
-function formaterPrix(val, devise, type) {
-    if (val == null) return '—';
-    if (type === "forex") return val.toFixed(4);
-    if (val >= 10000)  return devise + val.toLocaleString('fr-FR', {minimumFractionDigits:0, maximumFractionDigits:0});
-    if (val >= 1000)   return devise + val.toLocaleString('fr-FR', {minimumFractionDigits:2, maximumFractionDigits:2});
-    return devise + val.toFixed(2);
-}
-
-// ══════════════════════════════════════════
-// RENDU GRILLE
-// ══════════════════════════════════════════
-function afficherCartes() {
-    document.getElementById('skeleton-grid').classList.add('hidden');
-    const grid = document.getElementById('assets-grid');
-    grid.classList.remove('hidden');
-    grid.innerHTML = '';
-
-    const liste = filtreActif === 'tous' ? ACTIFS : ACTIFS.filter(a => a.cat === filtreActif);
-
-    liste.forEach(actif => {
-        const key = actif.type === "forex" ? actif.nom : actif.sym;
-        const q   = prixData[key];
-        const prix   = q ? formaterPrix(q.c, actif.devise, actif.type) : '—';
-        const dp     = q ? q.dp : null;
-        const d      = q ? q.d  : null;
-        const isPos  = dp != null && dp > 0;
-        const isNeg  = dp != null && dp < 0;
-        const varCls = isPos ? 'var-pos' : isNeg ? 'var-neg' : 'var-neu';
-        const badgeCls = isPos ? 'badge-hausse' : isNeg ? 'badge-baisse' : 'badge-neutre';
-        const tend   = isPos ? 'Haussière' : isNeg ? 'Baissière' : 'Neutre';
-        const varSym = isPos ? '▲' : isNeg ? '▼' : '·';
-        const isSel  = selectedSym === key;
-
-        const card = document.createElement('div');
-        card.className = `asset-card border rounded-2xl p-5 flex flex-col gap-3 reveal ${isSel ? 'selected border-emerald-600/60' : 'border-zinc-700/80'}`;
-        card.dataset.key = key;
-
-        card.innerHTML = `
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-zinc-800 flex items-center justify-center text-emerald-400 text-sm flex-shrink-0">
-                        <i class="fa-solid ${actif.icone}"></i>
-                    </div>
-                    <div>
-                        <div class="font-bold title-font text-base leading-none">${actif.nom}</div>
-                        <div class="text-zinc-600 text-[10px] mt-0.5">${actif.desc}</div>
-                    </div>
-                </div>
-                <span class="px-2.5 py-0.5 text-[10px] rounded-xl font-medium ${badgeCls}">${tend}</span>
-            </div>
-
-            <div class="flex items-baseline gap-2">
-                <span class="text-2xl font-bold title-font font-mono ${q ? '' : 'text-zinc-600'}">${prix}</span>
-                ${dp != null ? `<span class="text-sm font-semibold ${varCls}">${varSym} ${Math.abs(dp).toFixed(2)}%</span>` : ''}
-            </div>
-
-            ${q && (d != null || q.h != null) ? `
-            <div class="flex gap-3 text-xs text-zinc-500 flex-wrap">
-                ${d != null ? `<span class="${varCls}">${isPos?'+':''}${d.toFixed(actif.type==='forex'?4:2)}${actif.devise}</span>` : ''}
-                ${q.h ? `<span>H: ${formaterPrix(q.h, actif.devise, actif.type)}</span>` : ''}
-                ${q.l ? `<span>B: ${formaterPrix(q.l, actif.devise, actif.type)}</span>` : ''}
-            </div>` : `<div class="text-xs text-zinc-600 italic">${actif.type==='forex' ? 'Variation intraday non disponible' : 'Données indisponibles'}</div>`}
-
-            <div class="mt-auto pt-2 border-t border-zinc-800 flex items-center justify-between">
-                <span class="text-[10px] text-zinc-600 uppercase tracking-wider">${actif.cat}</span>
-                <span class="text-[10px] text-emerald-500"><i class="fa-solid fa-chart-area mr-1"></i>Voir graphique</span>
-            </div>
-        `;
-
-        card.addEventListener('click', () => ouvrirGraphique(actif));
-        grid.appendChild(card);
-    });
-
-    // Scroll reveal
-    const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }});
-    }, { threshold: 0.05 });
-    document.querySelectorAll('.reveal:not(.visible)').forEach(el => obs.observe(el));
-}
-
-// ══════════════════════════════════════════
-// GRAPHIQUE
-// ══════════════════════════════════════════
-let currentActif = null;
-
-async function ouvrirGraphique(actif, resolution="D", days=30) {
-    const key = actif.type === "forex" ? actif.nom : actif.sym;
-    selectedSym  = key;
-    currentActif = actif;
-
-    // Sélection visuelle
-    document.querySelectorAll('.asset-card').forEach(c => {
-        const sel = c.dataset.key === key;
-        c.classList.toggle('selected', sel);
-        c.classList.toggle('border-emerald-600/60', sel);
-        c.classList.toggle('border-zinc-700/80', !sel);
-    });
-
-    const panel = document.getElementById('chart-panel');
-    panel.classList.remove('hidden');
-    panel.scrollIntoView({ behavior:'smooth', block:'start' });
-
-    // Header
-    const q = prixData[key];
-    document.getElementById('chart-name').textContent = actif.nom;
-    document.getElementById('chart-sub').textContent  = (actif.symChart || actif.sym || actif.nom) + ' · ' + actif.desc;
-
-    if (q && q.c) {
-        const isPos = q.dp != null && q.dp >= 0;
-        document.getElementById('chart-price').textContent = formaterPrix(q.c, actif.devise, actif.type);
-        document.getElementById('chart-change').innerHTML = q.dp != null
-            ? `<span class="${isPos?'var-pos':'var-neg'}">${isPos?'▲':'▼'} ${Math.abs(q.dp).toFixed(2)}%</span>`
-            : `<span class="var-neu">Variation N/A</span>`;
-
-        document.getElementById('chart-stats').innerHTML = [
-            ['Ouverture',     formaterPrix(q.o,  actif.devise, actif.type)],
-            ['Clôture préc.', formaterPrix(q.pc, actif.devise, actif.type)],
-            ['Haut',          formaterPrix(q.h,  actif.devise, actif.type)],
-            ['Bas',           formaterPrix(q.l,  actif.devise, actif.type)],
-        ].map(([label, val]) => `
-            <div class="bg-zinc-900 rounded-xl p-3 text-center">
-                <div class="text-xs text-zinc-500 mb-1">${label}</div>
-                <div class="font-mono text-sm font-semibold">${val || '—'}</div>
-            </div>
-        `).join('');
-    }
-
-    // Chargement candles
-    const loading = document.getElementById('chart-loading');
-    const loadMsg = document.getElementById('chart-loading-msg');
-    loading.classList.remove('hidden');
-    loadMsg.textContent = 'Chargement du graphique…';
-    if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-
-    const now  = Math.floor(Date.now() / 1000);
-    const from = now - days * 86400;
-    const candles = await fetchCandles(actif, resolution, from, now);
-
-    if (!candles) {
-        loadMsg.textContent = 'Graphique indisponible pour cet actif sur ce plan Finnhub.';
-        return;
-    }
-
-    loading.classList.add('hidden');
-
-    // Labels selon granularité
-    const labels = candles.t.map(ts => {
-        const d = new Date(ts * 1000);
-        return days <= 5
-            ? d.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})
-            : d.toLocaleDateString('fr-FR', {day:'2-digit', month:'short'});
-    });
-
-    const prices  = candles.c;
-    const isHausse = prices[prices.length-1] >= prices[0];
-    const couleur  = isHausse ? '#10b981' : '#ef4444';
-
-    const ctx = document.getElementById('price-chart').getContext('2d');
-    const grad = ctx.createLinearGradient(0,0,0,320);
-    grad.addColorStop(0, isHausse ? 'rgba(16,185,129,0.22)' : 'rgba(239,68,68,0.22)');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-
-    chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels,
-            datasets:[{
-                data: prices,
-                borderColor: couleur,
-                borderWidth: 2,
-                backgroundColor: grad,
-                fill: true,
-                tension: 0.35,
-                pointRadius: prices.length > 120 ? 0 : 2,
-                pointHoverRadius: 5,
-                pointBackgroundColor: couleur,
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            interaction: { intersect:false, mode:'index' },
-            plugins: {
-                legend: { display:false },
-                tooltip: {
-                    backgroundColor:'rgba(24,24,27,0.95)',
-                    borderColor:'rgba(63,63,70,0.8)', borderWidth:1,
-                    titleColor:'#a1a1aa', bodyColor:'#f4f4f5', padding:10,
-                    callbacks: {
-                        label: ctx => ` ${formaterPrix(ctx.raw, actif.devise, actif.type)}`
-                    }
-                }
-            },
-            scales: {
-                x: {
-                    grid: { color:'rgba(63,63,70,0.35)' },
-                    ticks: { color:'#71717a', font:{size:10}, maxTicksLimit:10, maxRotation:0 }
-                },
-                y: {
-                    position:'right',
-                    grid: { color:'rgba(63,63,70,0.35)' },
-                    ticks: {
-                        color:'#71717a', font:{size:10},
-                        callback: v => formaterPrix(v, actif.devise, actif.type)
-                    }
-                }
-            }
-        }
-    });
-}
-
-// Boutons période
-document.querySelectorAll('.period-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.period-btn').forEach(b => {
-            b.classList.remove('active-period','border-emerald-600','text-emerald-400');
-            b.classList.add('border-zinc-700','text-zinc-400');
-        });
-        btn.classList.add('active-period','border-emerald-600','text-emerald-400');
-        btn.classList.remove('border-zinc-700','text-zinc-400');
-        if (currentActif) ouvrirGraphique(currentActif, btn.dataset.res, parseInt(btn.dataset.days));
-    });
-});
-
-// ══════════════════════════════════════════
-// FILTRES
-// ══════════════════════════════════════════
-document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => {
-            b.classList.remove('active'); b.classList.add('text-zinc-400');
-        });
-        btn.classList.add('active'); btn.classList.remove('text-zinc-400');
-        filtreActif = btn.dataset.filter;
-        afficherCartes();
-    });
-});
-
-// ══════════════════════════════════════════
-// COUNTDOWN
-// ══════════════════════════════════════════
-function demarrerCountdown() {
-    countdownLeft = REFRESH_SEC;
-    if (countdownInterval) clearInterval(countdownInterval);
-    countdownInterval = setInterval(() => {
-        countdownLeft = Math.max(0, countdownLeft - 1);
-        document.getElementById('countdown-sec').textContent = countdownLeft;
-        const pct = (countdownLeft / REFRESH_SEC) * 100;
-        document.getElementById('countdown-bar').style.width = pct + '%';
-    }, 1000);
-}
-
-// ══════════════════════════════════════════
-// REFRESH
-// ══════════════════════════════════════════
-async function rafraichir() {
-    await chargerTousPrix();
-    mettreAJourTicker();
-    afficherCartes();
-    // Rafraîchit le graphique ouvert si besoin
-    if (currentActif && !document.getElementById('chart-panel').classList.contains('hidden')) {
-        const activeBtn = document.querySelector('.period-btn.active-period');
-        if (activeBtn) ouvrirGraphique(currentActif, activeBtn.dataset.res, parseInt(activeBtn.dataset.days));
-    }
-    demarrerCountdown();
-}
-
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-async function init() {
-    await chargerTousPrix();
-    mettreAJourTicker();
-    afficherCartes();
-    demarrerCountdown();
-    if (refreshInterval) clearInterval(refreshInterval);
-    refreshInterval = setInterval(rafraichir, REFRESH_SEC * 1000);
-
-    const obs = new IntersectionObserver(
-        e => e.forEach(en => { if(en.isIntersecting) en.target.classList.add('visible'); }),
-        { threshold: 0.1 }
-    );
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-}
-
-window.addEventListener('DOMContentLoaded', init);
-</script>
-
-<footer class="site-footer">
-    <p>
-        Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.<br>
-        Ils ne constituent pas un conseil en investissement personnalisé. Fractal ne détient pas le statut de CIF (AMF).<br>
-        Tout investissement comporte des risques de perte en capital.
-    </p>
-    <p class="mt-4">© 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a></p>
-</footer>
-<script>
-(function(){
-    const obs = new IntersectionObserver(entries=>{
-        entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
-    },{threshold:0.08});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-})();
-</script>
-<!-- Firebase SDK (compat) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
-<script>
-// ═══════════════════════════════════════════
-// FIREBASE CONFIG
-// ═══════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyBSlXOeyDxVKUFBBkPTMbsS_oY6kADkbMg",
-  authDomain: "fractal-86f1f.firebaseapp.com",
-  projectId: "fractal-86f1f",
-  storageBucket: "fractal-86f1f.firebasestorage.app",
-  messagingSenderId: "954198010037",
-  appId: "1:954198010037:web:3548437da32d3a34d7b6fc"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-firebase.auth().languageCode = 'fr';
-
-// ═══════════════════════════════════════════
-// GESTION DYNAMIQUE DU HEADER AUTH
-// ═══════════════════════════════════════════
-firebase.auth().onAuthStateChanged((user) => {
-  const authSection = document.getElementById('auth-section');
-  const authSectionMobile = document.getElementById('auth-section-mobile');
-  if (!authSection) return;
-
-  if (user) {
-    // ✅ UTILISATEUR CONNECTÉ
-    const displayName = user.displayName || user.email.split('@')[0];
-    const initial = displayName[0].toUpperCase();
-    
-    const authHTML = `
-      <div style="display:flex;align-items:center;gap:0.5rem;">
-        <a href="compte.html" class="auth-user-badge">
-          <div class="auth-avatar">${initial}</div>
-          <span class="auth-username">${displayName}</span>
-        </a>
-        <button id="logoutBtn" class="logout-btn" title="Se déconnecter">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
-          </svg>
+      <div class="header-actions">
+        <div id="auth-section"></div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+          <span></span><span></span><span></span>
         </button>
       </div>
-    `;
-    
-    authSection.innerHTML = authHTML;
-    if (authSectionMobile) {
-      authSectionMobile.innerHTML = `
-        <div style="display:flex;gap:0.5rem;padding-top:1rem;">
-          <a href="compte.html" class="btn-primary" style="flex:1;text-align:center;text-decoration:none;">
-            Mon compte
-          </a>
-          <button id="logoutBtnMobile" class="logout-btn" style="flex-shrink:0;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
-            </svg>
-          </button>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-nav-link">Newsletter</a>
+      <a href="radar.html" class="mobile-nav-link active">Radar</a>
+      <a href="archives.html" class="mobile-nav-link">Archives</a>
+      <a href="apropos.html" class="mobile-nav-link">À propos</a>
+      <div id="auth-section-mobile" style="margin-top: var(--space-4);"></div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="radar-header">
+    <span class="label">Radar</span>
+    <h1 style="margin-top: var(--space-4);">Cours en temps réel</h1>
+    <p>Cliquez sur un actif pour afficher son graphique. Données rafraîchies toutes les 30 secondes.</p>
+  </section>
+
+  <!-- LAYOUT -->
+  <div class="radar-layout">
+    <!-- Sidebar -->
+    <aside class="assets-sidebar">
+      <div class="assets-filter">
+        <button class="filter-btn active" data-filter="all">Tous</button>
+        <button class="filter-btn" data-filter="indices">Indices</button>
+        <button class="filter-btn" data-filter="actions">Actions</button>
+        <button class="filter-btn" data-filter="crypto">Crypto</button>
+        <button class="filter-btn" data-filter="forex">Forex</button>
+      </div>
+      <div class="asset-list" id="assetList">
+        <div class="skeleton" style="height: 3.5rem;"></div>
+        <div class="skeleton" style="height: 3.5rem;"></div>
+        <div class="skeleton" style="height: 3.5rem;"></div>
+      </div>
+    </aside>
+
+    <!-- Chart panel -->
+    <main class="chart-panel">
+      <div class="chart-header">
+        <div class="chart-title">
+          <h3 id="chartSymbol">—</h3>
+          <p id="chartName">Sélectionnez un actif</p>
         </div>
-      `;
+        <div class="period-buttons">
+          <button class="period-btn" data-period="1M">1M</button>
+          <button class="period-btn active" data-period="3M">3M</button>
+          <button class="period-btn" data-period="6M">6M</button>
+          <button class="period-btn" data-period="1A">1A</button>
+        </div>
+      </div>
+      <canvas id="chartCanvas" class="chart-canvas"></canvas>
+      <p style="text-align: center; margin-top: var(--space-4); font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+        Données Finnhub · refresh 30s
+      </p>
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>
+      Fractal est un média de vulgarisation financière. Les données sont fournies à titre informatif uniquement.
+    </p>
+    <p style="margin-top: 1rem;">
+      © 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a>
+    </p>
+  </footer>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="auth-guard.js"></script>
+
+  <script>
+    // ⚠️ Remplace par TA clé Finnhub (gratuite sur finnhub.io)
+    const FINNHUB_KEY = 'TA_CLE_FINNHUB_ICI';
+
+    const ASSETS = [
+      { symbol: '^FCHI', name: 'CAC 40', type: 'indices' },
+      { symbol: '^GSPC', name: 'S&P 500', type: 'indices' },
+      { symbol: '^IXIC', name: 'NASDAQ', type: 'indices' },
+      { symbol: 'AAPL', name: 'Apple', type: 'actions' },
+      { symbol: 'MSFT', name: 'Microsoft', type: 'actions' },
+      { symbol: 'TSLA', name: 'Tesla', type: 'actions' },
+      { symbol: 'NVDA', name: 'Nvidia', type: 'actions' },
+      { symbol: 'BTC-USD', name: 'Bitcoin', type: 'crypto' },
+      { symbol: 'ETH-USD', name: 'Ethereum', type: 'crypto' },
+      { symbol: 'EURUSD=X', name: 'EUR/USD', type: 'forex' },
+      { symbol: 'GBPUSD=X', name: 'GBP/USD', type: 'forex' },
+    ];
+
+    let selectedSymbol = ASSETS[0].symbol;
+    let selectedPeriod = '3M';
+    let chart = null;
+
+    async function init() {
+      await FractalAuth.checkAuth(true);
+      FractalAuth.renderAuthUI('auth-section');
+      if (document.getElementById('auth-section-mobile')) {
+        FractalAuth.renderAuthUI('auth-section-mobile');
+      }
+      renderAssets('all');
+      loadChart();
+      setInterval(loadChart, 30000);
     }
-    
-    // Événements logout
-    const logoutHandler = async () => {
-      await firebase.auth().signOut();
-      window.location.href = 'login.html';
-    };
-    document.getElementById('logoutBtn')?.addEventListener('click', logoutHandler);
-    document.getElementById('logoutBtnMobile')?.addEventListener('click', logoutHandler);
-    
-  } else {
-    // ❌ UTILISATEUR NON CONNECTÉ
-    authSection.innerHTML = `
-      <a href="login.html" class="btn-primary" style="padding:0.5rem 1.25rem;font-size:0.875rem;">
-        Se connecter
-      </a>
-    `;
-    if (authSectionMobile) {
-      authSectionMobile.innerHTML = `
-        <a href="login.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:1rem;padding:0.75rem;">
-          Se connecter
-        </a>
-      `;
+
+    function renderAssets(filter) {
+      const list = document.getElementById('assetList');
+      const filtered = filter === 'all' ? ASSETS : ASSETS.filter(a => a.type === filter);
+      
+      list.innerHTML = filtered.map(a => `
+        <div class="asset-card ${a.symbol === selectedSymbol ? 'selected' : ''}" data-symbol="${a.symbol}">
+          <div class="asset-card-left">
+            <div class="asset-card-symbol">${a.symbol.replace('^', '').replace('=X', '')}</div>
+            <div class="asset-card-name">${a.name}</div>
+          </div>
+          <div class="asset-card-price">
+            <div class="value" id="price-${a.symbol.replace(/[^a-zA-Z0-9]/g, '')}">—</div>
+          </div>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.asset-card').forEach(card => {
+        card.addEventListener('click', () => {
+          selectedSymbol = card.dataset.symbol;
+          list.querySelectorAll('.asset-card').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          loadChart();
+        });
+      });
+
+      filtered.forEach(a => fetchPrice(a));
     }
-  }
-});
 
-// ═══════════════════════════════════════════
-// HEADER UX ENHANCEMENTS
-// ═══════════════════════════════════════════
-
-// 1. Effet de scroll
-const header = document.getElementById('siteHeader');
-if (header) {
-  window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    async function fetchPrice(asset) {
+      if (!FINNHUB_KEY || FINNHUB_KEY === 'TA_CLE_FINNHUB_ICI') return;
+      try {
+        const symbol = asset.symbol.replace('=X', '');
+        const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${FINNHUB_KEY}`);
+        const data = await res.json();
+        if (data.c) {
+          const el = document.getElementById(`price-${asset.symbol.replace(/[^a-zA-Z0-9]/g, '')}`);
+          if (el) el.textContent = data.c.toFixed(2);
+        }
+      } catch {}
     }
-  });
-}
 
-// 2. Menu mobile toggle
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const mobileMenu = document.getElementById('mobileMenu');
+    async function loadChart() {
+      const asset = ASSETS.find(a => a.symbol === selectedSymbol);
+      if (!asset) return;
 
-if (mobileMenuBtn && mobileMenu) {
-  mobileMenuBtn.addEventListener('click', () => {
-    mobileMenuBtn.classList.toggle('active');
-    mobileMenu.classList.toggle('active');
-  });
-  
-  mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenuBtn.classList.remove('active');
-      mobileMenu.classList.remove('active');
+      document.getElementById('chartSymbol').textContent = asset.symbol.replace('^', '').replace('=X', '');
+      document.getElementById('chartName').textContent = asset.name;
+
+      if (!FINNHUB_KEY || FINNHUB_KEY === 'TA_CLE_FINNHUB_ICI') {
+        const ctx = document.getElementById('chartCanvas').getContext('2d');
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['—'],
+            datasets: [{ label: 'Configurez votre clé Finnhub', data: [], borderColor: '#10b981' }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+          }
+        });
+        return;
+      }
+
+      const periodDays = { '1M': 30, '3M': 90, '6M': 180, '1A': 365 }[selectedPeriod] || 90;
+      const to = Math.floor(Date.now() / 1000);
+      const from = to - periodDays * 86400;
+      const symbol = selectedSymbol.replace('=X', '');
+
+      try {
+        const res = await fetch(`https://finnhub.io/api/v1/stock/candle?symbol=${symbol}&resolution=D&from=${from}&to=${to}&token=${FINNHUB_KEY}`);
+        const data = await res.json();
+
+        if (data.s === 'ok') {
+          const labels = data.t.map(t => new Date(t * 1000).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }));
+          const ctx = document.getElementById('chartCanvas').getContext('2d');
+          if (chart) chart.destroy();
+
+          const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+          gradient.addColorStop(0, 'rgba(16, 185, 129, 0.2)');
+          gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+          chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [{
+                data: data.c,
+                borderColor: '#10b981',
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 0,
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { display: false } },
+              scales: {
+                x: { grid: { display: false }, ticks: { color: '#737373', font: { family: 'JetBrains Mono', size: 10 } } },
+                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#737373', font: { family: 'JetBrains Mono', size: 10 } } }
+              }
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Chart error:', err);
+      }
+    }
+
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderAssets(btn.dataset.filter);
+      });
     });
-  });
-}
 
-// 3. Marquer la page active
-const currentPage = (window.location.pathname.split('/').pop() || 'index.html').replace(/\.html$/i, '');
-document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
-  const page = (link.getAttribute('data-page') || link.getAttribute('href') || '').replace(/\.html$/i, '');
-  if (page === currentPage || (currentPage === 'index' && page === 'index')) {
-    link.classList.add('active');
-  }
-});
-</script>
+    // Periods
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedPeriod = btn.dataset.period;
+        loadChart();
+      });
+    });
+
+    // Mobile
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('mobileMenuBtn').classList.toggle('active');
+      document.getElementById('mobileMenu').classList.toggle('active');
+    });
+
+    init();
+  </script>
 </body>
 </html>

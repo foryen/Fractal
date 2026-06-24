@@ -3,173 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fractal • Mon compte</title>
+  <title>Fractal · Mon compte</title>
   <link rel="stylesheet" href="fractal.css">
-  <style>
-    .account-container {
-      max-width: 48rem;
-      margin: 0 auto;
-      padding: 4rem 1.5rem;
-    }
-    .account-card {
-      background: rgba(24,24,27,0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(63,63,70,0.8);
-      border-radius: 1.5rem;
-      padding: 3rem 2rem;
-    }
-    .avatar {
-      width: 5rem;
-      height: 5rem;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--emerald-500), var(--emerald-600));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 700;
-      margin: 0 auto 1rem;
-      box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .stat-card {
-      background: var(--zinc-800);
-      border-radius: 1rem;
-      padding: 1.5rem;
-      text-align: center;
-    }
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--emerald-400);
-    }
-    .stat-label {
-      color: var(--zinc-400);
-      font-size: 0.875rem;
-      margin-top: 0.25rem;
-    }
-    .section-divider {
-      border-top: 1px solid var(--zinc-800);
-      padding-top: 2rem;
-      margin-top: 2rem;
-    }
-    .premium-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.1));
-      border: 1px solid rgba(16,185,129,0.4);
-      padding: 1rem 1.5rem;
-      border-radius: 1rem;
-      width: 100%;
-    }
-  </style>
+  <link rel="icon" type="image/png" href="fractal_logo.png">
 </head>
 <body>
 
-<header class="site-header" id="siteHeader">
-  <nav class="header-nav">
-    <!-- Logo + Nom -->
-    <a href="index.html" class="logo-container" title="Retour à l'accueil">
-      <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
-      <span class="logo-text title-font">Fractal</span>
-    </a>
-    
-    <!-- Navigation desktop -->
-    <div class="nav-links">
-      <a href="index.html" class="nav-link" data-page="index">Newsletter</a>
-      <a href="radar.html" class="nav-link" data-page="radar">Radar</a>
-      <a href="archives.html" class="nav-link" data-page="archives">Archives</a>
-      <a href="apropos.html" class="nav-link" data-page="apropos">À propos</a>
-    </div>
-    
-    <!-- Zone Auth + Menu mobile -->
-    <div class="header-actions">
-      <div id="auth-section">
-        <div class="skeleton" style="width:6rem;height:2rem;border-radius:1rem;"></div>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="header-nav">
+      <a href="index.html" class="logo-container">
+        <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
+        <span class="logo-text">Fractal</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
+        <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
+        <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
+        <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
       </div>
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
-  
-  <!-- Menu mobile (dropdown) -->
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html" class="mobile-nav-link" data-page="index">Newsletter</a>
-    <a href="radar.html" class="mobile-nav-link" data-page="radar">Radar</a>
-    <a href="archives.html" class="mobile-nav-link" data-page="archives">Archives</a>
-    <a href="apropos.html" class="mobile-nav-link" data-page="apropos">À propos</a>
-    <div id="auth-section-mobile"></div>
-  </div>
-</header>
-
-  <main class="account-container">
-    <div class="account-card">
-      <div style="text-align:center;">
-        <div class="avatar title-font" id="userAvatar">F</div>
-        <h1 class="title-font" style="font-size:1.75rem;margin-bottom:0.5rem;" id="userName">Chargement...</h1>
-        <p style="color:var(--zinc-400);font-size:0.875rem;" id="userEmail">—</p>
-      </div>
-
-      <div class="section-divider">
-        <h2 class="title-font" style="font-size:1.25rem;margin-bottom:1rem;">Votre abonnement</h2>
-        <div class="premium-badge">
-          <span style="font-size:1.5rem;">✨</span>
-          <div>
-            <div class="title-font" style="font-weight:600;">Accès Premium</div>
-            <div style="color:var(--zinc-400);font-size:0.8rem;">Accès illimité à toutes les fonctionnalités</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-divider">
-        <h2 class="title-font" style="font-size:1.25rem;margin-bottom:1rem;">Vos avantages</h2>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-value title-font">15</div>
-            <div class="stat-label">Articles / jour</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value title-font">∞</div>
-            <div class="stat-label">Archives</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value title-font">24/7</div>
-            <div class="stat-label">Radar live</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-divider">
-        <h2 class="title-font" style="font-size:1.25rem;margin-bottom:1rem;">Actions rapides</h2>
-        <div style="display:flex;flex-direction:column;gap:0.75rem;">
-          <a href="index.html" class="btn-primary" style="text-align:center;text-decoration:none;">
-            📰 Voir la newsletter du jour
-          </a>
-          <a href="archives.html" class="btn-primary" style="text-align:center;text-decoration:none;background:var(--zinc-800);">
-            📚 Accéder aux archives
-          </a>
-          <a href="radar.html" class="btn-primary" style="text-align:center;text-decoration:none;background:var(--zinc-800);">
-            📡 Ouvrir le radar
-          </a>
-        </div>
-      </div>
-
-      <div class="section-divider" style="text-align:center;">
-        <button id="logoutBtn" class="btn-primary" style="background:transparent;border:1px solid var(--zinc-700);color:var(--zinc-400);">
-          Se déconnecter
+      <div class="header-actions">
+        <div id="auth-section"></div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+          <span></span><span></span><span></span>
         </button>
       </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-nav-link">Newsletter</a>
+      <a href="radar.html" class="mobile-nav-link">Radar</a>
+      <a href="archives.html" class="mobile-nav-link">Archives</a>
+      <a href="apropos.html" class="mobile-nav-link">À propos</a>
+      <div id="auth-section-mobile" style="margin-top: var(--space-4);"></div>
     </div>
-  </main>
+  </header>
+
+  <!-- CONTENT -->
+  <section class="section">
+    <div class="section-header">
+      <span class="label">Espace personnel</span>
+      <span class="text-muted font-mono" style="font-size: 0.75rem;">Premium</span>
+    </div>
+
+    <!-- Account header -->
+    <div class="account-header">
+      <div class="account-avatar font-display" id="userAvatar">F</div>
+      <div class="account-info">
+        <h2 id="userName">Chargement…</h2>
+        <p id="userEmail">—</p>
+      </div>
+    </div>
+
+    <!-- Abonnement -->
+    <div class="account-section">
+      <h3>Votre abonnement</h3>
+      <div class="premium-badge-large">
+        <div class="premium-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+          <h4>Accès Premium</h4>
+          <p>Accès illimité à toutes les fonctionnalités</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avantages -->
+    <div class="account-section">
+      <h3>Vos avantages</h3>
+      <div class="account-stats">
+        <div class="account-stat">
+          <div class="value">15</div>
+          <div class="label">Articles par jour</div>
+        </div>
+        <div class="account-stat">
+          <div class="value">∞</div>
+          <div class="label">Archives</div>
+        </div>
+        <div class="account-stat">
+          <div class="value">24/7</div>
+          <div class="label">Radar live</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="account-section">
+      <h3>Actions rapides</h3>
+      <div class="account-actions">
+        <a href="index.html" class="btn btn-primary btn-block">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg>
+          Newsletter du jour
+        </a>
+        <a href="archives.html" class="btn btn-secondary btn-block">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg>
+          Archives
+        </a>
+        <a href="radar.html" class="btn btn-secondary btn-block">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19.07 4.93A10 10 0 0 0 6.99 3.34"/><path d="M4 6h.01"/><path d="M2.29 9.62A10 10 0 1 0 21.31 8.35"/><path d="M16.24 7.76A6 6 0 1 0 8.23 16.67"/><path d="M12 18h.01"/><circle cx="12" cy="12" r="2"/></svg>
+          Radar
+        </a>
+      </div>
+    </div>
+
+    <!-- Déconnexion -->
+    <div style="text-align: center; margin-top: var(--space-8);">
+      <button class="btn btn-ghost" id="logoutBtnFull">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Se déconnecter
+      </button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>
+      Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.
+    </p>
+    <p style="margin-top: 1rem;">
+      © 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a>
+    </p>
+  </footer>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -178,147 +132,26 @@
 
   <script>
     (async function() {
-      // Page protégée : redirige si non connecté
       const user = await FractalAuth.checkAuth(true);
       FractalAuth.renderAuthUI('auth-section');
+      if (document.getElementById('auth-section-mobile')) {
+        FractalAuth.renderAuthUI('auth-section-mobile');
+      }
 
-      // Affiche les infos utilisateur
       const displayName = user.displayName || user.email.split('@')[0];
       document.getElementById('userName').textContent = displayName;
       document.getElementById('userEmail').textContent = user.email;
       document.getElementById('userAvatar').textContent = displayName[0].toUpperCase();
+
+      document.getElementById('logoutBtnFull').addEventListener('click', async () => {
+        await FractalAuth.logout();
+      });
     })();
-  </script>
-  <!-- Firebase SDK (compat) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
-<script>
-// ═══════════════════════════════════════════
-// FIREBASE CONFIG
-// ═══════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyBSlXOeyDxVKUFBBkPTMbsS_oY6kADkbMg",
-  authDomain: "fractal-86f1f.firebaseapp.com",
-  projectId: "fractal-86f1f",
-  storageBucket: "fractal-86f1f.firebasestorage.app",
-  messagingSenderId: "954198010037",
-  appId: "1:954198010037:web:3548437da32d3a34d7b6fc"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-firebase.auth().languageCode = 'fr';
-
-// ═══════════════════════════════════════════
-// GESTION DYNAMIQUE DU HEADER AUTH
-// ═══════════════════════════════════════════
-firebase.auth().onAuthStateChanged((user) => {
-  const authSection = document.getElementById('auth-section');
-  const authSectionMobile = document.getElementById('auth-section-mobile');
-  if (!authSection) return;
-
-  if (user) {
-    // ✅ UTILISATEUR CONNECTÉ
-    const displayName = user.displayName || user.email.split('@')[0];
-    const initial = displayName[0].toUpperCase();
-    
-    const authHTML = `
-      <div style="display:flex;align-items:center;gap:0.5rem;">
-        <a href="compte.html" class="auth-user-badge">
-          <div class="auth-avatar">${initial}</div>
-          <span class="auth-username">${displayName}</span>
-        </a>
-        <button id="logoutBtn" class="logout-btn" title="Se déconnecter">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
-          </svg>
-        </button>
-      </div>
-    `;
-    
-    authSection.innerHTML = authHTML;
-    if (authSectionMobile) {
-      authSectionMobile.innerHTML = `
-        <div style="display:flex;gap:0.5rem;padding-top:1rem;">
-          <a href="compte.html" class="btn-primary" style="flex:1;text-align:center;text-decoration:none;">
-            Mon compte
-          </a>
-          <button id="logoutBtnMobile" class="logout-btn" style="flex-shrink:0;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
-            </svg>
-          </button>
-        </div>
-      `;
-    }
-    
-    // Événements logout
-    const logoutHandler = async () => {
-      await firebase.auth().signOut();
-      window.location.href = 'login.html';
-    };
-    document.getElementById('logoutBtn')?.addEventListener('click', logoutHandler);
-    document.getElementById('logoutBtnMobile')?.addEventListener('click', logoutHandler);
-    
-  } else {
-    // ❌ UTILISATEUR NON CONNECTÉ
-    authSection.innerHTML = `
-      <a href="login.html" class="btn-primary" style="padding:0.5rem 1.25rem;font-size:0.875rem;">
-        Se connecter
-      </a>
-    `;
-    if (authSectionMobile) {
-      authSectionMobile.innerHTML = `
-        <a href="login.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:1rem;padding:0.75rem;">
-          Se connecter
-        </a>
-      `;
-    }
-  }
-});
-
-// ═══════════════════════════════════════════
-// HEADER UX ENHANCEMENTS
-// ═══════════════════════════════════════════
-
-// 1. Effet de scroll
-const header = document.getElementById('siteHeader');
-window.addEventListener('scroll', () => {
-  if (window.pageYOffset > 50) {
-    header.classList.add('scrolled');
-  } else {
-    header.classList.remove('scrolled');
-  }
-});
-
-// 2. Menu mobile toggle
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const mobileMenu = document.getElementById('mobileMenu');
-
-if (mobileMenuBtn && mobileMenu) {
-  mobileMenuBtn.addEventListener('click', () => {
-    mobileMenuBtn.classList.toggle('active');
-    mobileMenu.classList.toggle('active');
-  });
-  
-  mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenuBtn.classList.remove('active');
-      mobileMenu.classList.remove('active');
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('mobileMenuBtn').classList.toggle('active');
+      document.getElementById('mobileMenu').classList.toggle('active');
     });
-  });
-}
-
-// 3. Marquer la page active
-const currentPage = (window.location.pathname.split('/').pop() || 'index.html').replace(/\.html$/i, '');
-document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
-  const page = (link.getAttribute('data-page') || link.getAttribute('href') || '').replace(/\.html$/i, '');
-  if (page === currentPage || (currentPage === 'index' && page === 'index')) {
-    link.classList.add('active');
-  }
-});
-</script>
+  </script>
 </body>
 </html>

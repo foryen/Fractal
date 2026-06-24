@@ -3,170 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fractal • Connexion</title>
+  <title>Fractal · Connexion</title>
+  <meta name="description" content="Accédez à votre espace Fractal — newsletter financière indépendante.">
   <link rel="stylesheet" href="fractal.css">
-  <style>
-    .auth-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
-    }
-    .auth-card {
-      background: rgba(24,24,27,0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(63,63,70,0.8);
-      border-radius: 1.5rem;
-      padding: 2.5rem 2rem;
-      width: 100%;
-      max-width: 26rem;
-      animation: fadeInUp 0.5s ease;
-    }
-    .auth-logo {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-    .auth-card h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
-    }
-    .auth-card .subtitle {
-      text-align: center;
-      color: var(--zinc-400);
-      font-size: 0.875rem;
-      margin-bottom: 2rem;
-    }
-    .auth-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .auth-form label {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--zinc-400);
-      margin-bottom: -0.5rem;
-    }
-    .auth-error {
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      color: var(--red-400);
-      padding: 0.75rem 1rem;
-      border-radius: 0.75rem;
-      font-size: 0.8rem;
-      display: none;
-      text-align: center;
-    }
-    .auth-error.visible { display: block; }
-    .auth-switch {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--zinc-400);
-      margin-top: 1rem;
-    }
-    .auth-switch a {
-      color: var(--emerald-400);
-      text-decoration: none;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .auth-switch a:hover { text-decoration: underline; }
-    .auth-divider {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      margin: 1rem 0;
-      color: var(--zinc-700);
-      font-size: 0.75rem;
-    }
-    .auth-divider::before,
-    .auth-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--zinc-700);
-    }
-    .btn-google {
-      background: transparent;
-      border: 1px solid var(--zinc-700);
-      color: #e4e4e7;
-      padding: 0.625rem 1.5rem;
-      border-radius: 1rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition-fast);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-    }
-    .btn-google:hover {
-      background: rgba(255,255,255,0.05);
-      border-color: var(--zinc-400);
-    }
-    .btn-google:active { transform: scale(0.98); }
-    .spinner-auth {
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      display: none;
-    }
-    .btn-primary.loading .spinner-auth { display: inline-block; }
-    .btn-primary.loading .btn-text { display: none; }
-    .btn-primary {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-  </style>
+  <link rel="icon" type="image/png" href="fractal_logo.png">
 </head>
-<body>
+<body class="auth-page">
 
+  <!-- Top bar -->
+  <div class="auth-top-bar">
+    <a href="apropos.html" class="auth-back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      À propos
+    </a>
+    <a href="index.html" class="auth-back-link">
+      Accueil
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+    </a>
+  </div>
+
+  <!-- Auth card -->
   <main class="auth-container">
     <div class="auth-card">
-      <div class="auth-logo">
-        <img src="fractal_logo2.png" alt="Fractal" class="logo-lg" onerror="this.src='fractal_logo.png'">
+      <div class="auth-brand">
+        <img src="fractal_logo.png" alt="Fractal" class="auth-logo-img">
+        <span class="auth-brand-name">Fractal</span>
       </div>
-      <h1 class="title-font" id="authTitle">Connexion</h1>
-      <p class="subtitle" id="authSubtitle">Accédez à votre espace Fractal</p>
+
+      <h1 class="auth-title" id="authTitle">Connexion</h1>
+      <p class="auth-subtitle" id="authSubtitle">Accédez à votre espace Fractal</p>
 
       <div class="auth-error" id="authError"></div>
 
       <form class="auth-form" id="authForm">
         <div id="nameField" style="display:none;">
-          <label for="userName">Prénom</label>
+          <label for="userName" class="f-label">Prénom</label>
           <input type="text" id="userName" class="f-input" placeholder="Votre prénom" autocomplete="name">
         </div>
 
-        <label for="userEmail">Adresse email</label>
-        <input type="email" id="userEmail" class="f-input" placeholder="vous@exemple.com" required autocomplete="email">
+        <div>
+          <label for="userEmail" class="f-label">Adresse email</label>
+          <input type="email" id="userEmail" class="f-input" placeholder="vous@exemple.com" required autocomplete="email">
+        </div>
 
-        <label for="userPassword">Mot de passe</label>
-        <input type="password" id="userPassword" class="f-input" placeholder="••••••••" required autocomplete="current-password" minlength="6">
+        <div>
+          <label for="userPassword" class="f-label">Mot de passe</label>
+          <input type="password" id="userPassword" class="f-input" placeholder="••••••••" required autocomplete="current-password" minlength="6">
+        </div>
 
-        <button type="submit" class="btn-primary" id="authBtn" style="margin-top:0.5rem;">
-          <span class="btn-text" id="authBtnText">Se connecter</span>
-          <span class="spinner-auth"></span>
+        <button type="submit" class="btn btn-primary btn-lg btn-block" id="authBtn">
+          <span id="authBtnText">Se connecter</span>
         </button>
       </form>
 
       <div class="auth-divider">ou</div>
 
       <button class="btn-google" id="googleBtn">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
         Continuer avec Google
       </button>
 
@@ -177,14 +70,15 @@
     </div>
   </main>
 
+  <footer class="auth-footer">
+    <p>© 2025 Fractal · Média de vulgarisation financière</p>
+  </footer>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
   <script>
-    // ═══════════════════════════════════════════
-    // 🔑 CONFIG FIREBASE — Remplace par TES valeurs
-    // ═══════════════════════════════════════════
     const firebaseConfig = {
       apiKey: "AIzaSyBSlXOeyDxVKUFBBkPTMbsS_oY6kADkbMg",
       authDomain: "fractal-86f1f.firebaseapp.com",
@@ -193,120 +87,83 @@
       messagingSenderId: "954198010037",
       appId: "1:954198010037:web:3548437da32d3a34d7b6fc"
     };
-
     firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    auth.languageCode = 'fr';
+    firebase.auth().languageCode = 'fr';
 
-    // ═══════════════════════════════════════════
-    // ÉTAT UI
-    // ═══════════════════════════════════════════
     let isLogin = true;
-
     const $ = id => document.getElementById(id);
-    const authTitle    = $('authTitle');
-    const authSubtitle = $('authSubtitle');
-    const authForm     = $('authForm');
-    const authError    = $('authError');
-    const authBtn      = $('authBtn');
-    const authBtnText  = $('authBtnText');
-    const nameField    = $('nameField');
-    const switchText   = $('switchText');
-    const switchLink   = $('switchLink');
-    const googleBtn    = $('googleBtn');
 
-    // Bascule Connexion ↔ Inscription
-    switchLink.addEventListener('click', () => {
+    const errorMessages = {
+      'auth/email-already-in-use': 'Cet email est déjà utilisé.',
+      'auth/invalid-email': 'Adresse email invalide.',
+      'auth/weak-password': 'Mot de passe trop faible (min. 6 caractères).',
+      'auth/user-not-found': 'Aucun compte avec cet email.',
+      'auth/wrong-password': 'Mot de passe incorrect.',
+      'auth/invalid-credential': 'Email ou mot de passe incorrect.',
+      'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.',
+      'auth/network-request-failed': 'Erreur réseau.',
+    };
+
+    function showError(msg) {
+      $('authError').textContent = msg;
+      $('authError').classList.add('visible');
+    }
+    function hideError() { $('authError').classList.remove('visible'); }
+
+    $('switchLink').addEventListener('click', () => {
       isLogin = !isLogin;
       hideError();
-
       if (isLogin) {
-        authTitle.textContent    = 'Connexion';
-        authSubtitle.textContent = 'Accédez à votre espace Fractal';
-        authBtnText.textContent  = 'Se connecter';
-        nameField.style.display  = 'none';
-        switchText.textContent   = 'Pas encore de compte ? ';
-        switchLink.textContent   = 'Créer un compte';
+        $('authTitle').textContent = 'Connexion';
+        $('authSubtitle').textContent = 'Accédez à votre espace Fractal';
+        $('authBtnText').textContent = 'Se connecter';
+        $('nameField').style.display = 'none';
+        $('switchText').textContent = 'Pas encore de compte ? ';
+        $('switchLink').textContent = 'Créer un compte';
       } else {
-        authTitle.textContent    = 'Inscription';
-        authSubtitle.textContent = 'Rejoignez la communauté Fractal';
-        authBtnText.textContent  = "Créer mon compte";
-        nameField.style.display  = 'block';
-        switchText.textContent   = 'Déjà inscrit ? ';
-        switchLink.textContent   = 'Se connecter';
+        $('authTitle').textContent = 'Inscription';
+        $('authSubtitle').textContent = 'Rejoignez la communauté Fractal';
+        $('authBtnText').textContent = 'Créer mon compte';
+        $('nameField').style.display = 'block';
+        $('switchText').textContent = 'Déjà inscrit ? ';
+        $('switchLink').textContent = 'Se connecter';
       }
     });
 
-    // Gestion erreurs
-    function showError(msg) {
-      authError.textContent = msg;
-      authError.classList.add('visible');
-    }
-    function hideError() {
-      authError.classList.remove('visible');
-    }
-
-    const errorMessages = {
-      'auth/email-already-in-use':   'Cet email est déjà utilisé.',
-      'auth/invalid-email':          'Adresse email invalide.',
-      'auth/weak-password':          'Mot de passe trop faible (min. 6 caractères).',
-      'auth/user-not-found':         'Aucun compte avec cet email.',
-      'auth/wrong-password':         'Mot de passe incorrect.',
-      'auth/invalid-credential':     'Email ou mot de passe incorrect.',
-      'auth/too-many-requests':      'Trop de tentatives. Réessayez plus tard.',
-      'auth/popup-closed-by-user':   'Connexion annulée.',
-      'auth/network-request-failed': 'Erreur réseau. Vérifiez votre connexion.',
-    };
-
-    function getErrorMessage(code) {
-      return errorMessages[code] || 'Une erreur est survenue.';
-    }
-
-    // Connexion / Inscription email
-    authForm.addEventListener('submit', async (e) => {
+    $('authForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       hideError();
-
-      const email    = $('userEmail').value.trim();
+      const email = $('userEmail').value.trim();
       const password = $('userPassword').value;
-      const name     = $('userName').value.trim();
-
-      authBtn.classList.add('loading');
-      authBtn.disabled = true;
+      const name = $('userName').value.trim();
 
       try {
         if (isLogin) {
-          await auth.signInWithEmailAndPassword(email, password);
+          await firebase.auth().signInWithEmailAndPassword(email, password);
         } else {
-          const cred = await auth.createUserWithEmailAndPassword(email, password);
+          const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
           if (name) await cred.user.updateProfile({ displayName: name });
         }
         window.location.href = 'index.html';
       } catch (err) {
-        showError(getErrorMessage(err.code));
-      } finally {
-        authBtn.classList.remove('loading');
-        authBtn.disabled = false;
+        showError(errorMessages[err.code] || 'Une erreur est survenue.');
       }
     });
 
-    // Connexion Google
-    googleBtn.addEventListener('click', async () => {
+    $('googleBtn').addEventListener('click', async () => {
       hideError();
       const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-
       try {
-        await auth.signInWithPopup(provider);
+        await firebase.auth().signInWithPopup(provider);
         window.location.href = 'index.html';
       } catch (err) {
         if (err.code !== 'auth/popup-closed-by-user') {
-          showError(getErrorMessage(err.code));
+          showError(errorMessages[err.code] || 'Connexion Google échouée.');
         }
       }
     });
-    // Redirection si déjà connecté
-    auth.onAuthStateChanged(user => {
+
+    firebase.auth().onAuthStateChanged(user => {
       if (user) window.location.href = 'index.html';
     });
   </script>
