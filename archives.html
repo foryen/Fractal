@@ -180,28 +180,77 @@
       }
     }
 
+    function escapeHtml(value) {
+      if (value === null || value === undefined) return '';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function displayArchive(data) {
       const modal = document.getElementById('archiveModal');
       const content = document.getElementById('archiveModalContent');
 
-      let articlesHTML = (data.articles || []).map(art => `
-        <div style="padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin-bottom: 0.75rem;">
-          <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-            <span class="badge badge-${getTendanceClass(art.impact_financier?.tendance_marche)}">${art.impact_financier?.tendance_marche || 'Neutre'}</span>
+      const articlesHTML = (data.articles || []).map(art => {
+        const impact = art.impact_financier || {};
+        const critique = art.analyse_critique_et_biais || {};
+        const radar = art.radar_fractal || {};
+        const actifs = Array.isArray(impact.actifs_concernes) ? impact.actifs_concernes : [];
+        const sourceLink = art._meta?.lien_source;
+
+        return `
+          <div style="padding: 1rem; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); margin-bottom: 0.75rem;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+              <span class="badge badge-${getTendanceClass(impact.tendance_marche)}">${escapeHtml(impact.tendance_marche || 'Neutre')}</span>
+            </div>
+            <h4 style="font-size: 0.9375rem; margin-bottom: 0.35rem;">${escapeHtml(art.titre_newsletter || 'Article sans titre')}</h4>
+            <p style="font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.8rem;">${escapeHtml(art.synthese_flash || 'Aucune synthèse disponible.')}</p>
+
+            <div style="display: grid; gap: 0.65rem; font-size: 0.8rem; color: var(--text-secondary);">
+              <div>
+                <strong style="color: var(--text-primary);">Contexte</strong>
+                <p style="margin: 0.2rem 0 0; line-height: 1.5;">${escapeHtml(art.contexte_macro_micro || '—')}</p>
+              </div>
+              <div>
+                <strong style="color: var(--text-primary);">Mécanique</strong>
+                <p style="margin: 0.2rem 0 0; line-height: 1.5;">${escapeHtml(art.mecanique_de_l_evenement || '—')}</p>
+              </div>
+              <div>
+                <strong style="color: var(--text-primary);">Impact financier</strong>
+                <p style="margin: 0.2rem 0 0; line-height: 1.5;">${escapeHtml(impact.explication_impact || 'Aucune explication détaillée fournie.')}</p>
+                <p style="margin: 0.25rem 0 0;">Actifs concernés : ${actifs.length ? actifs.map(a => `<span style="display:inline-block; margin-right:0.35rem; padding:0.15rem 0.45rem; background:var(--bg-muted); border-radius:999px;">${escapeHtml(a)}</span>`).join('') : '—'}</p>
+              </div>
+              <div>
+                <strong style="color: var(--text-primary);">Analyse critique & biais</strong>
+                <p style="margin: 0.2rem 0 0; line-height: 1.5;"><strong>Piège psychologique :</strong> ${escapeHtml(critique.piege_psychologique || '—')}</p>
+                <p style="margin: 0.2rem 0 0; line-height: 1.5;"><strong>Ce que le marché oublie :</strong> ${escapeHtml(critique.ce_que_le_marche_oublie || '—')}</p>
+              </div>
+              <div>
+                <strong style="color: var(--text-primary);">Radar Fractal</strong>
+                <p style="margin: 0.2rem 0 0; line-height: 1.5;">Volatilité : ${escapeHtml(radar.volatilite_attendue ?? '—')} · Risque : ${escapeHtml(radar.risque_systemique ?? '—')} · Fiabilité : ${escapeHtml(radar.fiabilite_information ?? '—')} · Horizon : ${escapeHtml(radar.horizon_impact || '—')}</p>
+              </div>
+              <div>
+                <strong style="color: var(--text-primary);">À surveiller</strong>
+                <p style="margin: 0.2rem 0 0; line-height: 1.5;">${escapeHtml(art.catalyseur_a_surveiller || '—')}</p>
+              </div>
+              ${sourceLink ? `<div><a href="${escapeHtml(sourceLink)}" target="_blank" rel="noopener noreferrer" style="color: var(--accent);">Voir la source</a></div>` : ''}
+              <div style="font-size: 0.75rem; opacity: 0.8;">${escapeHtml(art.disclaimer || '')}</div>
+            </div>
           </div>
-          <h4 style="font-size: 0.9375rem; margin-bottom: 0.25rem;">${art.titre_newsletter}</h4>
-          <p style="font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.5;">${art.synthese_flash}</p>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       content.innerHTML = `
         <div style="margin-bottom: 1.5rem;">
           <span class="label">Archive</span>
           <h2 style="margin-top: 0.5rem; font-family: 'Space Grotesk'; letter-spacing: -0.03em;">
-            Édition du ${data.derniere_mise_a_jour || '—'}
+            Édition du ${escapeHtml(data.derniere_mise_a_jour || '—')}
           </h2>
           <p class="text-secondary" style="margin-top: 0.5rem; font-size: 0.875rem;">
-            ${data.nb_articles || 0} articles analysés
+            ${escapeHtml(data.nb_articles || 0)} articles analysés
           </p>
         </div>
         ${articlesHTML}
