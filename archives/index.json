@@ -1,0 +1,77 @@
+{
+  "archives": [
+    {
+      "file": "newsletter_20260623_200031.json",
+      "date": "2026-06-23T20:00:31",
+      "readableDate": "23/06/2026 à 20:00",
+      "articleCount": 0,
+      "size_kb": 0.1
+    },
+    {
+      "file": "newsletter_20260623_192403.json",
+      "date": "2026-06-23T19:24:03",
+      "readableDate": "23/06/2026 à 19:24",
+      "articleCount": 15,
+      "size_kb": 46.3
+    },
+    {
+      "file": "newsletter_20260623_184622.json",
+      "date": "2026-06-23T18:46:22",
+      "readableDate": "23/06/2026 à 18:46",
+      "articleCount": 14,
+      "size_kb": 40.3
+    },
+    {
+      "file": "newsletter_20260622_185850.json",
+      "date": "2026-06-22T18:58:50",
+      "readableDate": "22/06/2026 à 18:58",
+      "articleCount": 15,
+      "size_kb": 43.0
+    },
+    {
+      "file": "newsletter_20260621_032035.json",
+      "date": "2026-06-21T03:20:35",
+      "readableDate": "21/06/2026 à 03:20",
+      "articleCount": 15,
+      "size_kb": 43.5
+    },
+    {
+      "file": "newsletter_20260621_031644.json",
+      "date": "2026-06-21T03:16:44",
+      "readableDate": "21/06/2026 à 03:16",
+      "articleCount": 15,
+      "size_kb": 43.0
+    },
+    {
+      "file": "newsletter_20260621_011101.json",
+      "date": "2026-06-21T01:11:01",
+      "readableDate": "21/06/2026 à 01:11",
+      "articleCount": 15,
+      "size_kb": 43.0
+    },
+    {
+      "file": "newsletter_20260621_004914.json",
+      "date": "2026-06-21T00:49:14",
+      "readableDate": "21/06/2026 à 00:49",
+      "articleCount": 1,
+      "size_kb": 2.6
+    },
+    {
+      "file": "newsletter_20260620_214447.json",
+      "date": "2026-06-20T21:44:47",
+      "readableDate": "20/06/2026 à 21:44",
+      "articleCount": 5,
+      "size_kb": 11.9
+    },
+    {
+      "file": "newsletter_20260620_192100.json",
+      "date": "2026-06-20T19:21:00",
+      "readableDate": "20/06/2026 à 19:21",
+      "articleCount": 5,
+      "size_kb": 11.9
+    }
+  ],
+  "generated_at": "2026-06-24T22:41:42.222835",
+  "total_count": 10,
+  "total_articles": 100
+}
