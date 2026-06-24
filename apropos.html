@@ -1,321 +1,191 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fractal • À propos</title>
-    <link rel="stylesheet" href="fractal.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal · À propos</title>
+  <meta name="description" content="Fractal, média indépendant de vulgarisation financière.">
+  <link rel="stylesheet" href="fractal.css">
+  <link rel="icon" type="image/png" href="fractal_logo.png">
 </head>
-<body class="bg-zinc-950 text-zinc-200 min-h-screen">
+<body>
 
-<header class="site-header" id="siteHeader">
-  <nav class="header-nav">
-    <!-- Logo + Nom -->
-    <a href="index.html" class="logo-container" title="Retour à l'accueil">
-      <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
-      <span class="logo-text title-font">Fractal</span>
-    </a>
-    
-    <!-- Navigation desktop -->
-    <div class="nav-links">
-      <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
-      <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
-      <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
-      <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
-    </div>
-    
-    <!-- Zone Auth + Menu mobile -->
-    <div class="header-actions">
-      <div id="auth-section">
-        <div class="skeleton" style="width:6rem;height:2rem;border-radius:1rem;"></div>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="header-nav">
+      <a href="index.html" class="logo-container">
+        <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
+        <span class="logo-text">Fractal</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
+        <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
+        <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
+        <a href="apropos.html" class="nav-link active" data-page="apropos.html">À propos</a>
       </div>
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
-  </nav>
-  
-  <!-- Menu mobile (dropdown) -->
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="index.html" class="mobile-nav-link" data-page="index.html">Newsletter</a>
-    <a href="radar.html" class="mobile-nav-link" data-page="radar.html">Radar</a>
-    <a href="archives.html" class="mobile-nav-link" data-page="archives.html">Archives</a>
-    <a href="apropos.html" class="mobile-nav-link" data-page="apropos.html">À propos</a>
-    <div id="auth-section-mobile"></div>
-  </div>
-</header>
-<script>
-document.getElementById('burger').addEventListener('click',()=>{
-    document.getElementById('mobile-nav').classList.toggle('hidden');
-});
-</script>
-
-<!-- ══ HERO ══ -->
-<section class="max-w-7xl mx-auto px-6 pt-20 pb-16">
-    <div class="max-w-3xl reveal">
-        <div class="inline-flex items-center gap-2 bg-zinc-900/80 border border-zinc-800 rounded-3xl px-5 py-2 mb-6">
-            <span class="text-emerald-400 text-sm font-medium">✦ Notre mission</span>
-        </div>
-        <!-- Logo détaillé hero À propos -->
-        <div class="flex items-center gap-6 mb-8">
-            <img src="fractal_logo2.png" alt="Fractal" class="logo-lg opacity-90 flex-shrink-0">
-            <h1 class="text-5xl md:text-6xl font-bold title-font tracking-tighter leading-none">
-                La finance,<br><span class="text-emerald-400">sans filtre</span><br>ni jargon.
-            </h1>
-        </div>
-        <p class="text-xl text-zinc-300 leading-relaxed">
-            Fractal est un média indépendant de vulgarisation financière. Nous utilisons l'IA pour scanner
-            les marchés, identifier ce qui compte vraiment, et vous l'expliquer clairement —
-            sans vous dire quoi acheter.
-        </p>
-    </div>
-</section>
-
-<!-- ══ CHIFFRES CLÉS ══ -->
-<section class="border-y border-zinc-800 bg-zinc-900/30 py-14 reveal">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div><div class="text-5xl font-bold title-font text-emerald-400 stat-glow">50+</div><div class="text-zinc-400 text-sm mt-2">Sources analysées</div></div>
-            <div><div class="text-5xl font-bold title-font text-emerald-400 stat-glow">15</div><div class="text-zinc-400 text-sm mt-2">Articles par édition</div></div>
-            <div><div class="text-5xl font-bold title-font text-emerald-400 stat-glow">0</div><div class="text-zinc-400 text-sm mt-2">Conseil en investissement<br>(et c'est voulu)</div></div>
-            <div><div class="text-5xl font-bold title-font text-emerald-400 stat-glow">100%</div><div class="text-zinc-400 text-sm mt-2">Indépendant &<br>sans publicité</div></div>
-        </div>
-    </div>
-</section>
-
-<!-- ══ PIPELINE ══ -->
-<section class="max-w-7xl mx-auto px-6 py-20 reveal">
-    <div class="mb-12">
-        <div class="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-3">Comment ça marche</div>
-        <h2 class="text-4xl font-bold title-font tracking-tighter">Notre pipeline IA en 3 étapes</h2>
-    </div>
-    <div class="grid md:grid-cols-3 gap-6">
-        <div class="f-card p-8">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-900/40 border border-emerald-800/40 flex items-center justify-center mb-6">
-                <i class="fa-solid fa-satellite-dish text-emerald-400 text-xl"></i>
-            </div>
-            <div class="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-2">Étape 01</div>
-            <h3 class="text-xl font-semibold title-font mb-3">Collecte</h3>
-            <p class="text-zinc-400 text-sm leading-relaxed">Notre système surveille en continu plus de 50 flux RSS — Les Échos, AGEFI, Reuters, sources crypto et forex — sans interruption.</p>
-        </div>
-        <div class="f-card p-8">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-900/40 border border-emerald-800/40 flex items-center justify-center mb-6">
-                <i class="fa-solid fa-filter text-emerald-400 text-xl"></i>
-            </div>
-            <div class="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-2">Étape 02</div>
-            <h3 class="text-xl font-semibold title-font mb-3">Filtrage IA</h3>
-            <p class="text-zinc-400 text-sm leading-relaxed">Un premier modèle score chaque article de 0 à 10. Le score composite combine pertinence (70%) et fraîcheur (30%) pour un flux vivant.</p>
-        </div>
-        <div class="f-card p-8">
-            <div class="w-12 h-12 rounded-2xl bg-emerald-900/40 border border-emerald-800/40 flex items-center justify-center mb-6">
-                <i class="fa-solid fa-pen-nib text-emerald-400 text-xl"></i>
-            </div>
-            <div class="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-2">Étape 03</div>
-            <h3 class="text-xl font-semibold title-font mb-3">Vulgarisation</h3>
-            <p class="text-zinc-400 text-sm leading-relaxed">Un second agent IA rédige chaque analyse : contexte, mécanique, actifs concernés, scores Volatilité/Risque et biais psychologiques.</p>
-        </div>
-    </div>
-</section>
-
-<!-- ══ VALEURS ══ -->
-<section class="max-w-7xl mx-auto px-6 pb-20 reveal">
-    <div class="mb-12">
-        <div class="text-emerald-400 text-xs font-semibold uppercase tracking-widest mb-3">Ce en quoi on croit</div>
-        <h2 class="text-4xl font-bold title-font tracking-tighter">Nos valeurs</h2>
-    </div>
-    <div class="grid md:grid-cols-2 gap-6">
-        <div class="f-card p-8"><div class="text-3xl mb-4">🔍</div><h3 class="text-lg font-semibold title-font mb-2">Indépendance totale</h3><p class="text-zinc-400 text-sm leading-relaxed">Fractal n'est ni rémunéré par des brokers, ni financé par des maisons d'investissement. Notre seule boussole : l'impact réel sur les marchés.</p></div>
-        <div class="f-card p-8"><div class="text-3xl mb-4">🎓</div><h3 class="text-lg font-semibold title-font mb-2">Vulgarisation sans compromis</h3><p class="text-zinc-400 text-sm leading-relaxed">Chaque analyse est relue pour éliminer le jargon inutile. Si on ne peut pas l'expliquer simplement, c'est qu'on ne le comprend pas assez bien.</p></div>
-        <div class="f-card p-8"><div class="text-3xl mb-4">⚖️</div><h3 class="text-lg font-semibold title-font mb-2">Information, pas conseil</h3><p class="text-zinc-400 text-sm leading-relaxed">Fractal est un média, pas un cabinet de gestion. La décision d'investir reste entièrement la vôtre. Nous ne détenons pas le statut CIF.</p></div>
-        <div class="f-card p-8"><div class="text-3xl mb-4">🤖</div><h3 class="text-lg font-semibold title-font mb-2">IA transparente</h3><p class="text-zinc-400 text-sm leading-relaxed">Nous assumons pleinement l'usage de l'IA dans notre pipeline. Chaque analyse porte un score de fiabilité de source visible par tous.</p></div>
-    </div>
-</section>
-
-<!-- ══ DISCLAIMER ══ -->
-<section class="max-w-7xl mx-auto px-6 pb-20 reveal">
-    <div class="f-card p-8">
-        <div class="flex gap-4 items-start">
-            <i class="fa-solid fa-shield-halved text-emerald-400 text-2xl mt-1 flex-shrink-0"></i>
-            <div>
-                <h3 class="font-semibold title-font mb-3 text-lg">Mentions légales & Avertissement</h3>
-                <p class="text-zinc-400 text-sm leading-relaxed">
-                    Fractal est un média de vulgarisation financière. Les contenus publiés sont fournis à titre informatif et éducatif uniquement.
-                    Ils ne constituent en aucun cas un conseil en investissement personnalisé, une recommandation d'achat ou de vente de valeurs mobilières.<br><br>
-                    Fractal ne détient pas le statut de Conseiller en Investissements Financiers (CIF) tel que défini par l'AMF.
-                    Tout investissement comporte des risques, notamment de perte partielle ou totale du capital investi.
-                    Les performances passées ne préjugent pas des performances futures.<br><br>
-                    Les analyses produites par notre pipeline IA peuvent contenir des erreurs ou imprécisions.
-                    Nous vous encourageons à croiser les informations avec d'autres sources avant toute décision financière.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══ CTA ABONNEMENT ══ -->
-<section class="border-t border-zinc-800 bg-zinc-900/30 py-20 reveal">
-    <div class="max-w-2xl mx-auto px-6 text-center">
-        <h2 class="text-4xl font-bold title-font tracking-tighter mb-4">Rejoindre Fractal</h2>
-        <p class="text-zinc-400 mb-8">La newsletter financière qui vous respecte assez pour tout vous expliquer.</p>
-        <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input type="email" placeholder="votre@email.com" class="f-input">
-            <button class="btn-primary whitespace-nowrap">S'abonner gratuitement</button>
-        </div>
-        <p class="text-zinc-600 text-xs mt-4">Aucune carte de crédit. Désinscription en un clic.</p>
-    </div>
-</section>
-
-<footer class="site-footer">
-    <p>
-        Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.<br>
-        Ils ne constituent pas un conseil en investissement personnalisé. Fractal ne détient pas le statut de CIF (AMF).<br>
-        Tout investissement comporte des risques de perte en capital.
-    </p>
-    <p class="mt-4">© 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a></p>
-</footer>
-<script>
-(function(){
-    const obs = new IntersectionObserver(entries=>{
-        entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
-    },{threshold:0.08});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
-})();
-</script>
-<!-- Firebase SDK (compat) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
-<script>
-// ═══════════════════════════════════════════
-// FIREBASE CONFIG
-// ═══════════════════════════════════════════
-const firebaseConfig = {
-  apiKey: "AIzaSyBSlXOeyDxVKUFBBkPTMbsS_oY6kADkbMg",
-  authDomain: "fractal-86f1f.firebaseapp.com",
-  projectId: "fractal-86f1f",
-  storageBucket: "fractal-86f1f.firebasestorage.app",
-  messagingSenderId: "954198010037",
-  appId: "1:954198010037:web:3548437da32d3a34d7b6fc"
-};
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-firebase.auth().languageCode = 'fr';
-
-// ═══════════════════════════════════════════
-// GESTION DYNAMIQUE DU HEADER AUTH
-// ═══════════════════════════════════════════
-firebase.auth().onAuthStateChanged((user) => {
-  const authSection = document.getElementById('auth-section');
-  const authSectionMobile = document.getElementById('auth-section-mobile');
-  if (!authSection) return;
-
-  if (user) {
-    // ✅ UTILISATEUR CONNECTÉ
-    const displayName = user.displayName || user.email.split('@')[0];
-    const initial = displayName[0].toUpperCase();
-    
-    const authHTML = `
-      <div style="display:flex;align-items:center;gap:0.5rem;">
-        <a href="compte.html" class="auth-user-badge">
-          <div class="auth-avatar">${initial}</div>
-          <span class="auth-username">${displayName}</span>
-        </a>
-        <button id="logoutBtn" class="logout-btn" title="Se déconnecter">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
-          </svg>
+      <div class="header-actions">
+        <div id="auth-section"></div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+          <span></span><span></span><span></span>
         </button>
       </div>
-    `;
-    
-    authSection.innerHTML = authHTML;
-    if (authSectionMobile) {
-      authSectionMobile.innerHTML = `
-        <div style="display:flex;gap:0.5rem;padding-top:1rem;">
-          <a href="compte.html" class="btn-primary" style="flex:1;text-align:center;text-decoration:none;">
-            Mon compte
-          </a>
-          <button id="logoutBtnMobile" class="logout-btn" style="flex-shrink:0;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12h-9.5m7.5 3 3-3-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"/>
-            </svg>
-          </button>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-nav-link">Newsletter</a>
+      <a href="radar.html" class="mobile-nav-link">Radar</a>
+      <a href="archives.html" class="mobile-nav-link">Archives</a>
+      <a href="apropos.html" class="mobile-nav-link active">À propos</a>
+      <div id="auth-section-mobile" style="margin-top: var(--space-4);"></div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="section about-hero">
+    <span class="label">À propos</span>
+    <h1 style="margin-top: var(--space-4);">La finance, sans filtre ni jargon.</h1>
+    <p>
+      Fractal est un média indépendant de vulgarisation financière. Nous utilisons l'IA pour scanner les marchés, identifier ce qui compte vraiment, et vous l'expliquer clairement — sans vous dire quoi acheter.
+    </p>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value">50+</div>
+        <div class="stat-label">Sources analysées</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">15</div>
+        <div class="stat-label">Articles par édition</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Conseil en investissement</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Indépendant</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section class="section" style="padding-top: 0;">
+    <div class="section-header">
+      <span class="label">01 / Méthodologie</span>
+      <span class="text-muted">Pipeline IA</span>
+    </div>
+
+    <h2 style="margin-bottom: var(--space-3);">Comment ça marche</h2>
+    <p class="text-secondary" style="margin-bottom: var(--space-8); max-width: 40rem;">
+      Un pipeline en trois étapes, entièrement automatisé, pour transformer le bruit des marchés en informations exploitables.
+    </p>
+
+    <div class="pipeline-steps">
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">ÉTAPE 01</div>
+        <h3>Collecte</h3>
+        <p>Notre système surveille en continu plus de 50 flux RSS — Les Échos, AGEFI, Reuters, sources crypto et forex — sans interruption.</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">ÉTAPE 02</div>
+        <h3>Filtrage IA</h3>
+        <p>Un premier modèle score chaque article de 0 à 10. Le score composite combine pertinence (70%) et fraîcheur (30%) pour un flux vivant.</p>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-num">ÉTAPE 03</div>
+        <h3>Vulgarisation</h3>
+        <p>Un second agent IA rédige chaque analyse : contexte, mécanique, actifs concernés, scores Volatilité/Risque et biais psychologiques.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALEURS -->
+  <section class="section" style="padding-top: 0;">
+    <div class="section-header">
+      <span class="label">02 / Principes</span>
+      <span class="text-muted">Nos valeurs</span>
+    </div>
+
+    <h2 style="margin-bottom: var(--space-3);">Ce en quoi on croit</h2>
+
+    <div class="values-grid">
+      <div class="value-item">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
-      `;
-    }
-    
-    // Événements logout
-    const logoutHandler = async () => {
-      await firebase.auth().signOut();
-      window.location.href = 'login.html';
-    };
-    document.getElementById('logoutBtn')?.addEventListener('click', logoutHandler);
-    document.getElementById('logoutBtnMobile')?.addEventListener('click', logoutHandler);
-    
-  } else {
-    // ❌ UTILISATEUR NON CONNECTÉ
-    authSection.innerHTML = `
-      <a href="login.html" class="btn-primary" style="padding:0.5rem 1.25rem;font-size:0.875rem;">
-        Se connecter
-      </a>
-    `;
-    if (authSectionMobile) {
-      authSectionMobile.innerHTML = `
-        <a href="login.html" class="btn-primary" style="display:block;text-align:center;text-decoration:none;margin-top:1rem;padding:0.75rem;">
-          Se connecter
-        </a>
-      `;
-    }
-  }
-});
+        <h3>Indépendance totale</h3>
+        <p>Fractal n'est ni rémunéré par des brokers, ni financé par des maisons d'investissement. Notre seule boussole : l'impact réel sur les marchés.</p>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <h3>Vulgarisation sans compromis</h3>
+        <p>Chaque analyse est relue pour éliminer le jargon inutile. Si on ne peut pas l'expliquer simplement, c'est qu'on ne le comprend pas assez bien.</p>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+        </div>
+        <h3>Information, pas conseil</h3>
+        <p>Fractal est un média, pas un cabinet de gestion. La décision d'investir reste entièrement la vôtre. Nous ne détenons pas le statut CIF.</p>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>IA transparente</h3>
+        <p>Nous assumons pleinement l'usage de l'IA dans notre pipeline. Chaque analyse porte un score de fiabilité de source visible par tous.</p>
+      </div>
+    </div>
+  </section>
 
-// ═══════════════════════════════════════════
-// HEADER UX ENHANCEMENTS
-// ═══════════════════════════════════════════
+  <!-- MENTIONS LÉGALES -->
+  <section class="section" style="padding-top: 0;">
+    <div class="section-header">
+      <span class="label">03 / Légal</span>
+      <span class="text-muted">Avertissement</span>
+    </div>
 
-// 1. Effet de scroll
-const header = document.getElementById('siteHeader');
-window.addEventListener('scroll', () => {
-  if (window.pageYOffset > 50) {
-    header.classList.add('scrolled');
-  } else {
-    header.classList.remove('scrolled');
-  }
-});
+    <h2 style="margin-bottom: var(--space-3);">Mentions légales</h2>
 
-// 2. Menu mobile toggle
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const mobileMenu = document.getElementById('mobileMenu');
+    <div class="legal-block">
+      <p>Fractal est un média de vulgarisation financière. Les contenus publiés sont fournis à titre informatif et éducatif uniquement.</p>
+      <p>Ils ne constituent en aucun cas un conseil en investissement personnalisé, une recommandation d'achat ou de vente de valeurs mobilières.</p>
+      <p>Fractal ne détient pas le statut de Conseiller en Investissements Financiers (CIF) tel que défini par l'AMF.</p>
+      <p>Tout investissement comporte des risques, notamment de perte partielle ou totale du capital investi. Les performances passées ne préjugent pas des performances futures.</p>
+      <p>Les analyses produites par notre pipeline IA peuvent contenir des erreurs ou imprécisions. Nous vous encourageons à croiser les informations avec d'autres sources avant toute décision financière.</p>
+    </div>
+  </section>
 
-if (mobileMenuBtn && mobileMenu) {
-  mobileMenuBtn.addEventListener('click', () => {
-    mobileMenuBtn.classList.toggle('active');
-    mobileMenu.classList.toggle('active');
-  });
-  
-  mobileMenu.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      mobileMenuBtn.classList.remove('active');
-      mobileMenu.classList.remove('active');
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>
+      Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.
+    </p>
+    <p style="margin-top: 1rem;">
+      © 2025 Fractal · <a href="apropos.html">Mentions légales</a> · <a href="apropos.html">À propos</a>
+    </p>
+  </footer>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="auth-guard.js"></script>
+
+  <script>
+    (async function() {
+      await FractalAuth.checkAuth(false);
+      FractalAuth.renderAuthUI('auth-section');
+      if (document.getElementById('auth-section-mobile')) {
+        FractalAuth.renderAuthUI('auth-section-mobile');
+      }
+    })();
+
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('mobileMenuBtn').classList.toggle('active');
+      document.getElementById('mobileMenu').classList.toggle('active');
     });
-  });
-}
-
-// 3. Marquer la page active
-const currentPage = (window.location.pathname.split('/').pop() || 'index.html').replace(/\.html$/i, '');
-document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
-  const page = (link.getAttribute('data-page') || link.getAttribute('href') || '').replace(/\.html$/i, '');
-  if (page === currentPage || (currentPage === 'index' && page === 'index')) {
-    link.classList.add('active');
-  }
-});
-</script>
+  </script>
 </body>
 </html>
