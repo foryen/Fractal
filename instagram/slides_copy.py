@@ -50,17 +50,39 @@ def _payload(article: dict) -> str:
     }
     return json.dumps(keep, ensure_ascii=False)
 
+def _extract_json(text: str) -> dict:
+    """Récupère un objet JSON même si le modèle ajoute du texte ou des ``` autour."""
+    import json
+    text = text.strip().replace("```json", "").replace("```", "").strip()
+    start, end = text.find("{"), text.rfind("}")
+    if start != -1 and end != -1:
+        text = text[start:end + 1]
+    return json.loads(text)
+
+
 def _via_groq(article: dict) -> dict:
     from groq import Groq
     cl = Groq(api_key=os.environ["GROQ_API_KEY"])
-    r = cl.chat.completions.create(
-        model="qwen/qwen3.6-27b",
-        messages=[{"role": "system", "content": PROMPT},
-                  {"role": "user", "content": _payload(article)}],
-        temperature=0.5,
-        response_format={"type": "json_object"},
-    )
-    return json.loads(r.choices[0].message.content)
+    model = os.environ.get("GROQ_MODEL", "qwen/qwen3.6-27b")
+    msgs = [{"role": "system", "content": PROMPT},
+            {"role": "user", "content": _payload(article)}]
+
+    # Qwen3 = modèle de raisonnement : on coupe le "thinking" pour un JSON propre
+    extra = {"reasoning_effort": "none"} if "qwen3" in model else {}
+
+    # 1re tentative : mode JSON strict
+    try:
+        r = cl.chat.completions.create(
+            model=model, messages=msgs, temperature=0.5,
+            response_format={"type": "json_object"}, **extra,
+        )
+        return _extract_json(r.choices[0].message.content)
+    except Exception as e:
+        print(f"⚠️  JSON strict échoué ({type(e).__name__}), nouvelle tentative tolérante...")
+
+    # 2e tentative : sans format imposé, puis extraction tolérante du JSON
+    r = cl.chat.completions.create(model=model, messages=msgs, temperature=0.3, **extra)
+    return _extract_json(r.choices[0].message.content)
 
 def _via_anthropic(article: dict) -> dict:
     import anthropic
