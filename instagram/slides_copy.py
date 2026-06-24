@@ -54,7 +54,7 @@ def _via_groq(article: dict) -> dict:
     from groq import Groq
     cl = Groq(api_key=os.environ["GROQ_API_KEY"])
     r = cl.chat.completions.create(
-        model="llama-3.3-70b-versatile",
+        model="qwen/qwen3.6-27b",
         messages=[{"role": "system", "content": PROMPT},
                   {"role": "user", "content": _payload(article)}],
         temperature=0.5,
