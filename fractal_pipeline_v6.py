@@ -54,88 +54,80 @@ client = Groq(api_key=GROQ_API_KEY)
 # ==============================================================================
 
 flux_rss_sources = {
-    "Le Monde - Bourse":             "https://www.lemonde.fr/bourse/rss_full.xml",
-    "Le Monde - Devises":            "https://www.lemonde.fr/devises/rss_full.xml",
-    "Le Figaro - Bourse":            "https://www.lefigaro.fr/rss/figaro_bourse.xml",
-    "Les Échos - Marchés":           "https://feeds.feedburner.com/lesechos/4MR4suAcqTl",
-    "Les Échos - Conseils":          "https://services.lesechos.fr/rss/investir-conseils-boursiers.xml",
-    "Les Échos - Valeurs":           "https://feeds.feedburner.com/lesechos/BrFLB6ZLde7",
-    "France Info - Bourse":          "https://www.franceinfo.fr/economie/bourse.rss",
-    "France Info - Marchés":         "https://www.franceinfo.fr/economie/bourse/marches.rss",
-    "France Info - Croissance":      "https://www.franceinfo.fr/economie/croissance.rss",
-    "France 24 - Bourses":           "https://www.france24.com/fr/tag/bourses/rss",
-    "Libération - Marchés":          "https://www.liberation.fr/arc/outboundfeeds/rss/tags_slug/marches-financiers/?outputType=xml",
-    "Euronews - Marchés":            "https://fr.euronews.com/rss?level=theme&name=markets",
-    "L'Opinion - Bourse":            "https://www.lopinion.fr/theme/bourse.rss",
-    "La Presse - Marchés":           "https://www.lapresse.ca/affaires/marches/rss",
-    "AGEFI - Marchés Actions":       "https://www.agefi.fr/theme/marches-actions.rss",
-    "AGEFI - ETF":                   "https://www.agefi.fr/theme/etf.rss",
-    "AGEFI - Matières Premières":    "https://www.agefi.fr/theme/marches-de-matieres-premieres.rss",
-    "AGEFI - Obligations":           "https://www.agefi.fr/theme/marches-obligataires.rss",
-    "ABC Bourse - Actu":             "https://www.abcbourse.com/rss/displaynewsrss",
-    "ABC Bourse - Analyses":         "https://www.abcbourse.com/rss/lastanalysisrss",
-    "Bourse Direct - Analyses":      "https://www.boursedirect.fr/fr/actualites/flux/analyses/rss",
-    "Café de la Bourse":             "https://www.cafedelabourse.com/feed",
-    "Café de la Bourse - Crypto":    "https://www.cafedelabourse.com/crypto/feed",
-    "Investing - Vue Ensemble":      "https://fr.investing.com/rss/market_overview.rss",
-    "Investing - Actions":           "https://fr.investing.com/rss/news_25.rss",
-    "Coin Journal - Marchés":        "https://coinjournal.net/fr/actualites/category/marches/feed/",
-    "Coin Tribune - Trading":        "https://www.cointribune.com/tag/trading/feed/",
-    "Broker Forex":                  "https://www.broker-forex.fr/rss/forex.xml",
-    "AMF - Toutes Actualités":       "https://www.amf-france.org/fr/flux-rss/display/21",
-    "TradingSat - Bourse":           "https://www.tradingsat.com/rssbourse.xml",
-    # --- Spécialisés finance/bourse ---
-"AGEFI - Marchés Actions":      "https://www.agefi.fr/theme/marches-actions.rss",
-"AGEFI - ETF":                  "https://www.agefi.fr/theme/etf.rss",
-"AGEFI - Matières Premières":   "https://www.agefi.fr/theme/marches-de-matieres-premieres.rss",
-"AGEFI - Obligations":          "https://www.agefi.fr/theme/marches-obligataires.rss",
-"AGEFI - Économie Marchés":     "https://www.agefi.fr/news/economie-marches.rss",
-"AGEFI - Indices":              "https://www.agefi.fr/theme/indices.rss",
-"AGEFI - Introductions Bourse": "https://www.agefi.fr/theme/introduction-en-bourse.rss",
-"AGEFI - Hedge Funds":          "https://www.agefi.fr/theme/hedge-funds.rss",
-"ABC Bourse - Actu":            "https://www.abcbourse.com/rss/displaynewsrss",
-"ABC Bourse - Analyses":        "https://www.abcbourse.com/rss/lastanalysisrss",
-"ABC Bourse - Chroniques":      "https://www.abcbourse.com/rss/chroniquesrss",
-"Bourse Direct - Analyses":     "https://www.boursedirect.fr/fr/actualites/flux/analyses/rss",
-"Café de la Bourse":            "https://www.cafedelabourse.com/feed",
-"Café de la Bourse - Crypto":   "https://www.cafedelabourse.com/crypto/feed",
-"Café de la Bourse - Trading":  "https://www.cafedelabourse.com/trading/feed",
-"Investing - Vue Ensemble":     "https://fr.investing.com/rss/market_overview.rss",
-"Investing - Actions":          "https://fr.investing.com/rss/news_25.rss",
-"Investing - Marchés":          "https://fr.investing.com/rss/stock.rss",
-"Investing - Matières Premières":"https://fr.investing.com/rss/commodities.rss",
-"Investing - Obligations":      "https://fr.investing.com/rss/bonds.rss",
-"EasyBourse":                   "https://www.easybourse.com/flux/media.rss",
-"France Bourse - À la Une":     "https://www.francebourse.com/JOUR/rss.xml",
-"France Bourse - Finance":      "https://www.francebourse.com/BOURSE/rss.xml",
-"Idéal Investisseur":           "https://www.ideal-investisseur.fr/RSS.xml",
-"AllNews - Bourse":             "https://www.allnews.ch/taxonomy/term/5/feed",
-"CFnews - Bourse":              "https://www.cfnews.net/rss/feed/bourse",
-"CFnews - Marché Général":      "https://www.cfnews.net/rss/feed/marche_general",
-"ActusNewsWire":                "https://www.actusnews.com/fr/rss",
-"Novethic - Tendances":         "https://www.novethic.fr/category/finance-durable/tendances-de-marche/feed",
-"Décideurs - Finance":          "https://www.decideurs-magazine.com/finance.feed?type=rss",
-
-# --- Crypto ---
-"Coin Journal - Marchés":       "https://coinjournal.net/fr/actualites/category/marches/feed/",
-"Coin Tribune - Trading":       "https://www.cointribune.com/tag/trading/feed/",
-"Coin Tribune - Exchange":      "https://www.cointribune.com/actu/actu-exchange/feed/",
-
-# --- Forex ---
-"Broker Forex":                 "https://www.broker-forex.fr/rss/forex.xml",
-
-# --- Google Actualités (agrégateurs) ---
-"Google Actu - Bourse":         "https://news.google.com/rss/search?tbm=nws&q=bourse&oq=bourse&scoring=n&hl=fr&gl=FR&ceid=FR:fr",
-"Google Actu - NYSE":           "https://news.google.com/rss/search?tbm=nws&q=Bourse%20de%20New%20York&scoring=n&hl=fr&gl=FR&ceid=FR:fr",
-"Google Actu - Paris":          "https://news.google.com/rss/search?tbm=nws&q=Bourse%20de%20Paris&scoring=n&hl=fr&gl=FR&ceid=FR:fr",
-
-# --- Réglementaire (AMF) ---
-"AMF - Toutes Actualités":      "https://www.amf-france.org/fr/flux-rss/display/21",
-"AMF - Communiqués de Presse":  "https://www.amf-france.org/fr/flux-rss/display/23",
-"AMF - Réglementation":         "https://www.amf-france.org/fr/flux-rss/display/31",
-
-# --- BFM / TradingSat ---
-"TradingSat - Bourse":          "https://www.tradingsat.com/rssbourse.xml",
+    # ── Presse généraliste (sections éco/finance) ──
+    "Le Monde - Bourse":              "https://www.lemonde.fr/bourse/rss_full.xml",
+    "Le Monde - Devises":             "https://www.lemonde.fr/devises/rss_full.xml",
+    "Le Figaro - Bourse":             "https://www.lefigaro.fr/rss/figaro_bourse.xml",
+    "Les Échos - Marchés":            "https://feeds.feedburner.com/lesechos/4MR4suAcqTl",
+    "Les Échos - Conseils":           "https://services.lesechos.fr/rss/investir-conseils-boursiers.xml",
+    "Les Échos - Valeurs":            "https://feeds.feedburner.com/lesechos/BrFLB6ZLde7",
+    "France Info - Bourse":           "https://www.franceinfo.fr/economie/bourse.rss",
+    "France Info - Marchés":          "https://www.franceinfo.fr/economie/bourse/marches.rss",
+    "France Info - Croissance":       "https://www.franceinfo.fr/economie/croissance.rss",
+    "France 24 - Bourses":            "https://www.france24.com/fr/tag/bourses/rss",
+    "Libération - Marchés":           "https://www.liberation.fr/arc/outboundfeeds/rss/tags_slug/marches-financiers/?outputType=xml",
+    "Euronews - Marchés":             "https://fr.euronews.com/rss?level=theme&name=markets",
+    "L'Opinion - Bourse":             "https://www.lopinion.fr/theme/bourse.rss",
+    "La Presse - Marchés":            "https://www.lapresse.ca/affaires/marches/rss",
+    
+    # ── AGEFI (toutes sections) ──
+    "AGEFI - Marchés Actions":        "https://www.agefi.fr/theme/marches-actions.rss",
+    "AGEFI - ETF":                    "https://www.agefi.fr/theme/etf.rss",
+    "AGEFI - Matières Premières":     "https://www.agefi.fr/theme/marches-de-matieres-premieres.rss",
+    "AGEFI - Obligations":            "https://www.agefi.fr/theme/marches-obligataires.rss",
+    "AGEFI - Économie Marchés":       "https://www.agefi.fr/news/economie-marches.rss",
+    "AGEFI - Indices":                "https://www.agefi.fr/theme/indices.rss",
+    "AGEFI - Introductions Bourse":   "https://www.agefi.fr/theme/introduction-en-bourse.rss",
+    "AGEFI - Hedge Funds":            "https://www.agefi.fr/theme/hedge-funds.rss",
+    
+    # ── Plateformes boursières spécialisées ──
+    "ABC Bourse - Actu":              "https://www.abcbourse.com/rss/displaynewsrss",
+    "ABC Bourse - Analyses":          "https://www.abcbourse.com/rss/lastanalysisrss",
+    "ABC Bourse - Chroniques":        "https://www.abcbourse.com/rss/chroniquesrss",
+    "Bourse Direct - Analyses":       "https://www.boursedirect.fr/fr/actualites/flux/analyses/rss",
+    "Café de la Bourse":              "https://www.cafedelabourse.com/feed",
+    "Café de la Bourse - Crypto":     "https://www.cafedelabourse.com/crypto/feed",
+    "Café de la Bourse - Trading":    "https://www.cafedelabourse.com/trading/feed",
+    "EasyBourse":                     "https://www.easybourse.com/flux/media.rss",
+    "France Bourse - À la Une":       "https://www.francebourse.com/JOUR/rss.xml",
+    "France Bourse - Finance":        "https://www.francebourse.com/BOURSE/rss.xml",
+    "Idéal Investisseur":             "https://www.ideal-investisseur.fr/RSS.xml",
+    
+    # ── Investing.com (toutes sections) ──
+    "Investing - Vue Ensemble":       "https://fr.investing.com/rss/market_overview.rss",
+    "Investing - Actions":            "https://fr.investing.com/rss/news_25.rss",
+    "Investing - Marchés":            "https://fr.investing.com/rss/stock.rss",
+    "Investing - Matières Premières": "https://fr.investing.com/rss/commodities.rss",
+    "Investing - Obligations":        "https://fr.investing.com/rss/bonds.rss",
+    
+    # ── Crypto ──
+    "Coin Journal - Marchés":         "https://coinjournal.net/fr/actualites/category/marches/feed/",
+    "Coin Tribune - Trading":         "https://www.cointribune.com/tag/trading/feed/",
+    "Coin Tribune - Exchange":        "https://www.cointribune.com/actu/actu-exchange/feed/",
+    
+    # ── Forex ──
+    "Broker Forex":                   "https://www.broker-forex.fr/rss/forex.xml",
+    
+    # ── Sites d'actualité financière ──
+    "AllNews - Bourse":               "https://www.allnews.ch/taxonomy/term/5/feed",
+    "CFnews - Bourse":                "https://www.cfnews.net/rss/feed/bourse",
+    "CFnews - Marché Général":        "https://www.cfnews.net/rss/feed/marche_general",
+    "ActusNewsWire":                  "https://www.actusnews.com/fr/rss",
+    "Novethic - Tendances":           "https://www.novethic.fr/category/finance-durable/tendances-de-marche/feed",
+    "Décideurs - Finance":            "https://www.decideurs-magazine.com/finance.feed?type=rss",
+    
+    # ── Google Actualités (agrégateurs) ──
+    "Google Actu - Bourse":           "https://news.google.com/rss/search?tbm=nws&q=bourse&oq=bourse&scoring=n&hl=fr&gl=FR&ceid=FR:fr",
+    "Google Actu - NYSE":             "https://news.google.com/rss/search?tbm=nws&q=Bourse%20de%20New%20York&scoring=n&hl=fr&gl=FR&ceid=FR:fr",
+    "Google Actu - Paris":            "https://news.google.com/rss/search?tbm=nws&q=Bourse%20de%20Paris&scoring=n&hl=fr&gl=FR&ceid=FR:fr",
+    
+    # ── Réglementaire (AMF) ──
+    "AMF - Toutes Actualités":        "https://www.amf-france.org/fr/flux-rss/display/21",
+    "AMF - Communiqués de Presse":    "https://www.amf-france.org/fr/flux-rss/display/23",
+    "AMF - Réglementation":           "https://www.amf-france.org/fr/flux-rss/display/31",
+    
+    # ── BFM / TradingSat ──
+    "TradingSat - Bourse":            "https://www.tradingsat.com/rssbourse.xml"
 }
 
 # ==============================================================================
