@@ -1,4 +1,4 @@
-name: 🔄 Update Fractal Newsletter2
+name: 🔄 Update Fractal Newsletter
 
 on:
   schedule:
@@ -84,7 +84,11 @@ jobs:
             echo "✅ Rien de nouveau à publier"
           else
             git commit -m "📸 IG visuels - $(date +'%Y-%m-%d')"
-            git push
+            # le job newsletter a pu pousser entre-temps : on rebase puis on pousse
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              echo "push refusé, nouvelle tentative ($i)..."; sleep 5
+            done
           fi
 
       - name: ⏳ Laisser le CDN servir les images
@@ -105,5 +109,8 @@ jobs:
             echo "rien à sauvegarder"
           else
             git commit -m "📸 IG posted.json - $(date +'%Y-%m-%d')"
-            git push
+            for i in 1 2 3; do
+              git pull --rebase origin main && git push && break
+              echo "push refusé, nouvelle tentative ($i)..."; sleep 5
+            done
           fi
