@@ -596,8 +596,8 @@ RETOURNE STRICTEMENT un objet JSON valide, sans texte autour :
                     f"Score composite (pertinence×fraîcheur) : {article.get('score_composite', '')}/10"
                 }
             ],
-            temperature=0.25,
-            response_format={"type": "json_object"}
+            temperature=0.05,   # Quasi-déterministe pour la notation
+            response_format={"type": "json_object"},
             reasoning_effort="none",   # coupe le "thinking" de Qwen3 -> JSON propre
         )
         return json.loads(response.choices[0].message.content.strip())
