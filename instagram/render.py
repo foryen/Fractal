@@ -1,14 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-render.py — Transforme un article de newsletter_data.json en slides PNG (1080x1350)
-pour un carrousel Instagram, en réutilisant la charte graphique de Fractal.
-
-Usage :
-    python render.py --article 0 --out out/
-Dépendances : jinja2, playwright (+ `playwright install chromium`)
-"""
-import argparse, json, pathlib, re
-from jinja2 import Environment, FileSystemLoader
+"""render.py — Slides PNG 1080x1350 pour carrousel Instagram (charte Fractal)."""
+import argparse, json, os, pathlib, re
+from jinja2 import Environment, FileSystemLoader, ChainableUndefined
 from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).parent
@@ -16,8 +9,6 @@ TREND_MAP = {
     "Haussière": "hausse", "Baissière": "baisse",
     "Neutre": "neutre", "Forte Incertitude": "incertitude",
 }
-# Couleur des barres. Pour volatilité/risque : haut = mauvais (rouge).
-# Pour la fiabilité : on inverse (haut = bon = vert).
 HIGH, MID, LOW = ("high", "#34d399"), ("mid", "#fbbf24"), ("low", "#f87171")
 
 def level_for(value: int, invert: bool = False) -> tuple[str, str]:
@@ -44,11 +35,9 @@ def slugify(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")[:40] or "post"
 
 def apply_copy(article: dict, copy: dict | None) -> dict:
-    """Superpose le texte généré par IA sur l'article, en conservant
-    les champs structurés (radar, actifs, tendance, disclaimer)."""
     if not copy:
         return article
-    a = json.loads(json.dumps(article))  # copie profonde
+    a = json.loads(json.dumps(article))
     a["titre_newsletter"] = copy.get("hook_title", a["titre_newsletter"])
     a["synthese_flash"] = copy.get("hook_flash", a["synthese_flash"])
     a["contexte_macro_micro"] = copy.get("contexte", a["contexte_macro_micro"])
@@ -61,7 +50,7 @@ def apply_copy(article: dict, copy: dict | None) -> dict:
 
 def render_article(article: dict, out_dir: pathlib.Path, copy: dict | None = None) -> list[pathlib.Path]:
     article = apply_copy(article, copy)
-    env = Environment(loader=FileSystemLoader(str(ROOT / "templates")))
+    env = Environment(loader=FileSystemLoader(str(ROOT / "templates")), undefined=ChainableUndefined)
     html = env.get_template("carousel.html.j2").render(
         a=article,
         trend_class=TREND_MAP.get(article["impact_financier"]["tendance_marche"], "neutre"),
@@ -71,7 +60,12 @@ def render_article(article: dict, out_dir: pathlib.Path, copy: dict | None = Non
     slug = slugify(article["titre_newsletter"])
     paths = []
     with sync_playwright() as p:
-        browser = p.chromium.launch(args=["--no-sandbox", "--force-color-profile=srgb"])
+        launch_kwargs = {"args": ["--no-sandbox", "--force-color-profile=srgb",
+                                  "--disable-dev-shm-usage", "--disable-gpu"]}
+        _chromium = os.environ.get("CHROMIUM_PATH")
+        if _chromium:
+            launch_kwargs["executable_path"] = _chromium
+        browser = p.chromium.launch(**launch_kwargs)
         page = browser.new_page(viewport={"width": 1080, "height": 1350}, device_scale_factor=1)
         page.set_content(html, wait_until="networkidle")
         page.evaluate("document.fonts.ready")
@@ -87,13 +81,11 @@ def render_article(article: dict, out_dir: pathlib.Path, copy: dict | None = Non
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=str(ROOT.parent / "newsletter_data.json"))
-    ap.add_argument("--article", type=int, default=0, help="index dans articles[]")
+    ap.add_argument("--article", type=int, default=0)
     ap.add_argument("--out", default=str(ROOT / "out"))
     args = ap.parse_args()
-
     data = json.loads(pathlib.Path(args.data).read_text(encoding="utf-8"))
-    art = data["articles"][args.article]
-    files = render_article(art, pathlib.Path(args.out))
-    print(f"✅ {len(files)} slides générées :")
+    files = render_article(data["articles"][args.article], pathlib.Path(args.out))
+    print(f"✅ {len(files)} slides générées")
     for f in files:
         print("   ", f)
