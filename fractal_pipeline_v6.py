@@ -598,6 +598,7 @@ RETOURNE STRICTEMENT un objet JSON valide, sans texte autour :
             ],
             temperature=0.25,
             response_format={"type": "json_object"}
+            reasoning_effort="none",   # coupe le "thinking" de Qwen3 -> JSON propre
         )
         return json.loads(response.choices[0].message.content.strip())
     except Exception as e:
