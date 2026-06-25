@@ -1,6 +1,14 @@
 // search-engine.js — Moteur de recherche Fractal
 // Indexe les articles actuels + archives, recherche full-text avec filtres
 
+function buildAssetUrl(path) {
+  const normalizedPath = String(path).replace(/^\/+/, '');
+  const pathname = window.location.pathname || '/';
+  const isGitHubPagesRepo = /\/((Fractal|fractal))(\/|$)/.test(pathname);
+  const base = isGitHubPagesRepo ? '/Fractal' : '';
+  return `${base}/${normalizedPath}`.replace(/\/+/g, '/');
+}
+
 class FractalSearchEngine {
   constructor() {
     this.articles = [];
@@ -14,7 +22,7 @@ class FractalSearchEngine {
 
     try {
       // 1. Articles actuels
-      const currentRes = await fetch('newsletter_data.json?t=' + Date.now());
+      const currentRes = await fetch(buildAssetUrl('newsletter_data.json?t=' + Date.now()));
       if (currentRes.ok) {
         const currentData = await currentRes.json();
         (currentData.articles || []).forEach(art => {
@@ -25,12 +33,12 @@ class FractalSearchEngine {
       }
 
       // 2. Archives (via index.json)
-      const idxRes = await fetch('archives/index.json?t=' + Date.now());
+      const idxRes = await fetch(buildAssetUrl('archives/index.json?t=' + Date.now()));
       if (idxRes.ok) {
         const idx = await idxRes.json();
         const promises = (idx.archives || []).slice(0, 30).map(async arch => {
           try {
-            const r = await fetch(`archives/${arch.file}`);
+            const r = await fetch(buildAssetUrl(`archives/${arch.file}`));
             const d = await r.json();
             (d.articles || []).forEach(art => {
               art._meta = art._meta || {};

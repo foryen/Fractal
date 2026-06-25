@@ -61,6 +61,14 @@
       Insights clairs, indépendants et sans concession. Générés par IA, validés par une méthodologie rigoureuse.
     </p>
 
+    <form class="hero-search" action="recherche.html" method="get">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" name="q" placeholder="Rechercher un article, un actif, une idée..." autocomplete="off">
+      <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+
     <!-- Articles grid -->
     <div id="articles-grid" class="articles-grid">
       <div class="skeleton" style="height: 16rem;"></div>
@@ -69,7 +77,7 @@
     </div>
   </section>
 <!-- BARRE TENDANCES -->
-<div class="trending-bar" id="trendingBar" style="display:none;">
+<div class="trending-bar" id="trendingBar">
   <div class="trending-header">
     <div class="trending-header-left">
       <div class="trending-icon">
@@ -87,7 +95,16 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
     </a>
   </div>
-  <div class="trending-scroll" id="trendingScroll"></div>
+  <div class="trending-scroll" id="trendingScroll">
+    <div class="trending-item">
+      <div class="trending-item-rank">#01 · À SUIVRE</div>
+      <div class="trending-item-title">Chargement des tendances…</div>
+      <div class="trending-item-meta">
+        <span>Fractal</span>
+        <span class="trending-item-score">Live</span>
+      </div>
+    </div>
+  </div>
 </div>
   <!-- MODAL -->
   <div id="articleModal" class="f-modal-overlay" style="display:none;">
@@ -397,31 +414,59 @@
 </div>
 <script>
   // ═══ BARRE TENDANCES ═══
-  async function loadTrending() {
-    await FractalSearch.loadAll();
-    const trending = FractalSearch.getTrending(6);
-    if (trending.length === 0) return;
-
+  function renderTrendingFallback() {
     const bar = document.getElementById('trendingBar');
     const scroll = document.getElementById('trendingScroll');
     const count = document.getElementById('trendingCount');
+    if (!bar || !scroll || !count) return;
 
     bar.style.display = 'block';
-    count.textContent = `Top ${trending.length} analyses du moment`;
-
-    scroll.innerHTML = trending.map((art, i) => {
-      const meta = art._meta || {};
-      return `
-        <div class="trending-item" onclick='openArticleFromTrending(${JSON.stringify(art).replace(/'/g, "&#39;")})'>
-          <div class="trending-item-rank">#${String(i + 1).padStart(2, '0')} · TRENDING</div>
-          <div class="trending-item-title">${art.titre_newsletter || 'Sans titre'}</div>
-          <div class="trending-item-meta">
-            <span>${meta.source || '—'}</span>
-            <span class="trending-item-score">${(meta.score_composite || 0).toFixed(2)}</span>
-          </div>
+    count.textContent = 'Explorez les analyses Fractal';
+    scroll.innerHTML = `
+      <div class="trending-item" onclick="window.location.href='recherche.html'">
+        <div class="trending-item-rank">#01 · À DÉCOUVRIR</div>
+        <div class="trending-item-title">Ouvrez la recherche avancée</div>
+        <div class="trending-item-meta">
+          <span>Recherche</span>
+          <span class="trending-item-score">Live</span>
         </div>
-      `;
-    }).join('');
+      </div>
+    `;
+  }
+
+  async function loadTrending() {
+    try {
+      await FractalSearch.loadAll();
+      const trending = FractalSearch.getTrending(6);
+      const bar = document.getElementById('trendingBar');
+      const scroll = document.getElementById('trendingScroll');
+      const count = document.getElementById('trendingCount');
+      if (!bar || !scroll || !count) return;
+
+      bar.style.display = 'block';
+      if (trending.length === 0) {
+        renderTrendingFallback();
+        return;
+      }
+
+      count.textContent = `Top ${trending.length} analyses du moment`;
+
+      scroll.innerHTML = trending.map((art, i) => {
+        const meta = art._meta || {};
+        return `
+          <div class="trending-item" onclick='openArticleFromTrending(${JSON.stringify(art).replace(/'/g, "&#39;")})'>
+            <div class="trending-item-rank">#${String(i + 1).padStart(2, '0')} · TRENDING</div>
+            <div class="trending-item-title">${art.titre_newsletter || 'Sans titre'}</div>
+            <div class="trending-item-meta">
+              <span>${meta.source || '—'}</span>
+              <span class="trending-item-score">${(meta.score_composite || 0).toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch {
+      renderTrendingFallback();
+    }
   }
 
   function openArticleFromTrending(art) {
@@ -507,9 +552,41 @@
 </script>
 
 <style>
+  .hero-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.5rem;
+    max-width: 42rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+  .hero-search svg {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .hero-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-primary);
+    font: inherit;
+  }
+  .hero-search input::placeholder { color: var(--text-muted); }
+  .hero-search .btn { white-space: nowrap; }
+
   @media (max-width: 768px) {
     .hide-mobile { display: none; }
     .search-trigger kbd { display: none; }
+    .hero-search { flex-wrap: wrap; }
+    .hero-search .btn { width: 100%; justify-content: center; }
   }
 </style>
 </body>
