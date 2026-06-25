@@ -275,7 +275,7 @@ Réponds STRICTEMENT en JSON :
                 {"role": "system", "content": prompt_systeme},
                 {"role": "user",   "content": "\n".join(lignes)}
             ],
-              temperature=0.05,   # Quasi-déterministe pour la notation
+              temperature=0.25,   
             response_format={"type": "json_object"},
             reasoning_effort="none",   # coupe le "thinking" de Qwen3 -> JSON propre
         )
