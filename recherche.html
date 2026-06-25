@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal · Recherche</title>
+  <link rel="stylesheet" href="fractal.css">
+  <link rel="icon" type="image/png" href="fractal_logo.png">
+  <style>
+    .search-hero {
+      padding: var(--space-10) var(--space-6) var(--space-8);
+      max-width: 80rem;
+      margin: 0 auto;
+    }
+    .search-hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      letter-spacing: -0.03em;
+      margin-top: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+    .search-bar-wrapper {
+      position: relative;
+      margin-bottom: var(--space-6);
+    }
+    .search-bar-wrapper svg {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      width: 18px;
+      height: 18px;
+    }
+    .search-main-input {
+      width: 100%;
+      padding: 0.875rem 1rem 0.875rem 2.75rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      transition: border-color var(--duration-fast);
+    }
+    .search-main-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-subtle);
+    }
+
+    .filters-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    .filter-group label {
+      display: block;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-tertiary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: var(--space-2);
+    }
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      font-family: inherit;
+    }
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .filters-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .results-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+    .results-count strong { color: var(--text-primary); }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .result-card {
+      padding: var(--space-5);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--duration-fast);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .result-card:hover {
+      border-color: var(--border-strong);
+      background: var(--bg-elevated);
+      transform: translateY(-1px);
+    }
+    .result-badges {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+    .result-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.35;
+      letter-spacing: -0.015em;
+    }
+    .result-synthese {
+      color: var(--text-secondary);
+      font-size: 0.8125rem;
+      line-height: 1.55;
+      flex: 1;
+    }
+    .result-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border-subtle);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+    }
+    .result-score { color: var(--accent); font-weight: 500; }
+
+    .archive-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.125rem 0.5rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xs);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.625rem;
+      color: var(--text-tertiary);
+    }
+
+    @media (max-width: 640px) {
+      .filters-grid { grid-template-columns: 1fr 1fr; }
+      .results-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="header-nav">
+      <a href="index.html" class="logo-container">
+        <img src="fractal_logo.png" alt="Fractal" class="logo-sm">
+        <span class="logo-text">Fractal</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link" data-page="index.html">Newsletter</a>
+        <a href="radar.html" class="nav-link" data-page="radar.html">Radar</a>
+        <a href="archives.html" class="nav-link" data-page="archives.html">Archives</a>
+        <a href="apropos.html" class="nav-link" data-page="apropos.html">À propos</a>
+      </div>
+      <div class="header-actions">
+        <div id="auth-section"></div>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" class="mobile-nav-link">Newsletter</a>
+      <a href="radar.html" class="mobile-nav-link">Radar</a>
+      <a href="archives.html" class="mobile-nav-link">Archives</a>
+      <a href="apropos.html" class="mobile-nav-link">À propos</a>
+      <div id="auth-section-mobile" style="margin-top: var(--space-4);"></div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="search-hero">
+    <span class="label">Recherche</span>
+    <h1>Explorez toutes les analyses Fractal.</h1>
+    <p class="text-secondary" style="max-width: 40rem;">
+      Recherchez dans l'ensemble des articles publiés. Filtrez par sujet, tendance, source ou date.
+    </p>
+  </section>
+
+  <!-- SEARCH -->
+  <section class="section" style="padding-top: 0;">
+    <div class="search-bar-wrapper">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="searchInput" class="search-main-input"
+             placeholder="Rechercher un actif, un sujet, un événement..."
+             autocomplete="off">
+    </div>
+
+    <!-- FILTRES -->
+    <div class="filters-panel">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label>Catégorie</label>
+          <select id="filterCategorie">
+            <option value="">Toutes</option>
+            <option value="actions">Actions</option>
+            <option value="crypto">Crypto</option>
+            <option value="forex">Forex / Devises</option>
+            <option value="matieres">Matières premières</option>
+            <option value="macro">Macro-économie</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Tendance</label>
+          <select id="filterTendance">
+            <option value="">Toutes</option>
+            <option value="haussière">Haussière</option>
+            <option value="baissière">Baissière</option>
+            <option value="neutre">Neutre</option>
+            <option value="incertitude">Forte incertitude</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Source</label>
+          <select id="filterSource">
+            <option value="">Toutes les sources</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Score minimum</label>
+          <select id="filterScore">
+            <option value="0">Aucun filtre</option>
+            <option value="5">≥ 5.0</option>
+            <option value="7">≥ 7.0</option>
+            <option value="8">≥ 8.0 (Premium)</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Du</label>
+          <input type="date" id="filterDateFrom">
+        </div>
+
+        <div class="filter-group">
+          <label>Au</label>
+          <input type="date" id="filterDateTo">
+        </div>
+
+        <div class="filter-group">
+          <label>Origine</label>
+          <select id="filterOrigin">
+            <option value="">Tout</option>
+            <option value="current">Édition actuelle</option>
+            <option value="archive">Archives</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Trier par</label>
+          <select id="filterSort">
+            <option value="date">Date (récent)</option>
+            <option value="score">Score composite</option>
+            <option value="relevance">Pertinence</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filters-actions">
+        <div class="results-count" id="resultsCount">Chargement...</div>
+        <button class="btn btn-ghost btn-sm" id="resetBtn">Réinitialiser les filtres</button>
+      </div>
+    </div>
+
+    <!-- RÉSULTATS -->
+    <div class="results-grid" id="resultsGrid">
+      <div class="skeleton" style="height: 14rem;"></div>
+      <div class="skeleton" style="height: 14rem;"></div>
+      <div class="skeleton" style="height: 14rem;"></div>
+    </div>
+  </section>
+
+  <!-- MODAL ARTICLE -->
+  <div id="articleModal" class="f-modal-overlay" style="display:none;">
+    <div class="f-modal">
+      <button class="f-modal-close" onclick="closeArticleModal()" aria-label="Fermer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+      <div class="f-modal-body" id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>Fractal est un média de vulgarisation financière. Les contenus sont fournis à titre informatif et éducatif uniquement.</p>
+    <p style="margin-top: 1rem;">© 2025 Fractal · <a href="apropos.html">Mentions légales</a></p>
+  </footer>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="auth-guard.js"></script>
+  <script src="search-engine.js"></script>
+
+  <script>
+    (async function init() {
+      await FractalAuth.checkAuth(false);
+      FractalAuth.renderAuthUI('auth-section');
+      if (document.getElementById('auth-section-mobile')) {
+        FractalAuth.renderAuthUI('auth-section-mobile');
+      }
+
+      await FractalSearch.loadAll();
+
+      // Populate sources
+      const sourceSelect = document.getElementById('filterSource');
+      FractalSearch.getSources().forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s; opt.textContent = s;
+        sourceSelect.appendChild(opt);
+      });
+
+      // Load filters from URL
+      loadFiltersFromURL();
+
+      // Bind events
+      const filterIds = ['searchInput', 'filterCategorie', 'filterTendance', 'filterSource', 'filterScore', 'filterDateFrom', 'filterDateTo', 'filterOrigin', 'filterSort'];
+      filterIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener('input', debounce(performSearch, 250));
+        el.addEventListener('change', performSearch);
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', resetFilters);
+
+      performSearch();
+
+      document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+        document.getElementById('mobileMenuBtn').classList.toggle('active');
+        document.getElementById('mobileMenu').classList.toggle('active');
+      });
+    })();
+
+    function debounce(fn, wait) {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
+    }
+
+    function getFilters() {
+      return {
+        query: document.getElementById('searchInput').value,
+        categorie: document.getElementById('filterCategorie').value,
+        tendance: document.getElementById('filterTendance').value,
+        source: document.getElementById('filterSource').value,
+        scoreMin: parseFloat(document.getElementById('filterScore').value) || 0,
+        dateFrom: document.getElementById('filterDateFrom').value,
+        dateTo: document.getElementById('filterDateTo').value,
+        origin: document.getElementById('filterOrigin').value,
+        sortBy: document.getElementById('filterSort').value
+      };
+    }
+
+    function updateURL(filters) {
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([k, v]) => {
+        if (v !== '' && v !== 0 && v !== null && v !== undefined) params.set(k, v);
+      });
+      const url = params.toString() ? `?${params.toString()}` : 'recherche.html';
+      history.replaceState(null, '', url);
+    }
+
+    function loadFiltersFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      const mapping = {
+        query: 'searchInput',
+        categorie: 'filterCategorie',
+        tendance: 'filterTendance',
+        source: 'filterSource',
+        scoreMin: 'filterScore',
+        dateFrom: 'filterDateFrom',
+        dateTo: 'filterDateTo',
+        origin: 'filterOrigin',
+        sortBy: 'filterSort'
+      };
+      Object.entries(mapping).forEach(([key, id]) => {
+        const v = params.get(key);
+        if (v !== null) document.getElementById(id).value = v;
+      });
+    }
+
+    function performSearch() {
+      const filters = getFilters();
+      updateURL(filters);
+      const results = FractalSearch.search(filters.query, filters);
+      renderResults(results);
+    }
+
+    function resetFilters() {
+      ['searchInput', 'filterCategorie', 'filterTendance', 'filterSource', 'filterDateFrom', 'filterDateTo', 'filterOrigin'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      document.getElementById('filterScore').value = '0';
+      document.getElementById('filterSort').value = 'date';
+      performSearch();
+    }
+
+    function renderResults(results) {
+      const grid = document.getElementById('resultsGrid');
+      const count = document.getElementById('resultsCount');
+
+      const stats = FractalSearch.getStats();
+      count.innerHTML = `<strong>${results.length}</strong> résultat${results.length > 1 ? 's' : ''} sur ${stats.total} articles indexés`;
+
+      if (results.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <h3>Aucun résultat</h3>
+            <p>Essayez d'autres termes ou ajustez les filtres.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = results.map(art => {
+        const meta = art._meta || {};
+        const tendance = art.impact_financier?.tendance_marche || 'Neutre';
+        const badgeClass = getTendanceClass(tendance);
+        const isArchive = meta._origin === 'archive';
+
+        return `
+          <div class="result-card" onclick='openArticle(${JSON.stringify(art).replace(/'/g, "&#39;")})'>
+            <div class="result-badges">
+              ${isArchive ? '<span class="archive-tag">ARCHIVE</span>' : ''}
+              ${meta.est_nouveau ? '<span class="badge badge-new">Nouveau</span>' : ''}
+              <span class="badge badge-${badgeClass}">${tendance}</span>
+            </div>
+            <h3 class="result-title">${art.titre_newsletter || 'Sans titre'}</h3>
+            <p class="result-synthese">${art.synthese_flash || ''}</p>
+            <div class="result-meta">
+              <span>${meta.source || '—'} · ${formatDate(meta.date_article || meta._archiveDate)}</span>
+              <span class="result-score">${(meta.score_composite || 0).toFixed(2)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getTendanceClass(t) {
+      if (!t) return 'neutre';
+      const x = t.toLowerCase();
+      if (x.includes('hauss')) return 'hausse';
+      if (x.includes('baiss')) return 'baisse';
+      if (x.includes('incert')) return 'incertitude';
+      return 'neutre';
+    }
+
+    function formatDate(d) {
+      if (!d) return '—';
+      try {
+        const date = new Date(d);
+        const now = new Date();
+        const diff = Math.floor((now - date) / 86400000);
+        if (diff === 0) return "aujourd'hui";
+        if (diff === 1) return 'hier';
+        if (diff < 7) return `il y a ${diff}j`;
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+      } catch { return '—'; }
+    }
+
+    function openArticle(art) {
+      const meta = art._meta || {};
+      const impact = art.impact_financier || {};
+      const biais = art.analyse_critique_et_biais || {};
+      const radar = art.radar_fractal || {};
+
+      document.getElementById('modalContent').innerHTML = `
+        <div class="result-badges" style="margin-bottom: 1rem;">
+          <span class="badge badge-${getTendanceClass(impact.tendance_marche)}">${impact.tendance_marche || 'Neutre'}</span>
+          <span style="color: var(--text-muted); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace;">
+            ${meta.source} · ${formatDate(meta.date_article)}
+          </span>
+        </div>
+        <h2 style="font-family: 'Space Grotesk'; font-size: 1.75rem; margin-bottom: 1rem; letter-spacing: -0.03em;">${art.titre_newsletter}</h2>
+        <p style="color: var(--text-secondary); line-height: 1.65; margin-bottom: 2rem;">${art.synthese_flash}</p>
+
+        <div class="modal-section"><h4>Contexte</h4><p>${art.contexte_macro_micro || ''}</p></div>
+        <div class="modal-section"><h4>Mécanique</h4><p>${art.mecanique_de_l_evenement || ''}</p></div>
+        <div class="modal-section">
+          <h4>Impact</h4>
+          <p><strong>Actifs :</strong> ${(impact.actifs_concernes || []).join(', ')}</p>
+          <p>${impact.explication_impact || ''}</p>
+        </div>
+        <div class="modal-section">
+          <h4>Biais psychologique</h4>
+          <p><strong>${biais.piege_psychologique || ''}</strong></p>
+          <p>${biais.ce_que_le_marche_oublie || ''}</p>
+        </div>
+        <div class="modal-section">
+          <h4>Radar</h4>
+          <div class="radar-grid">
+            <div class="radar-item"><div class="label">Volatilité</div><div class="value">${radar.volatilite_attendue || 0}/5</div></div>
+            <div class="radar-item"><div class="label">Risque</div><div class="value">${radar.risque_systemique || 0}/5</div></div>
+            <div class="radar-item"><div class="label">Fiabilité</div><div class="value">${radar.fiabilite_information || 0}/5</div></div>
+          </div>
+        </div>
+        <div style="margin-top: 1.5rem; text-align: center;">
+          <a href="${meta.lien_source || '#'}" target="_blank" rel="noopener" class="btn btn-secondary">Source originale</a>
+        </div>
+      `;
+      document.getElementById('articleModal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeArticleModal() {
+      document.getElementById('articleModal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeArticleModal(); });
+  </script>
+</body>
+</html>
